@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AstroVerse - ท่องจักรวาล</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+body{font-family:'Kanit',sans-serif;background:#030712;color:#f3f4f6;overflow-x:hidden}.glass-panel{background:rgba(17,24,39,.88);backdrop-filter:blur(22px) saturate(135%);border:1px solid rgba(255,255,255,.1)}.glass-card{background:rgba(30,41,59,.6);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);transition:.3s}.glass-card:hover{border-color:rgba(168,85,247,.5);box-shadow:0 10px 30px -10px rgba(168,85,247,.3);transform:translateY(-4px)}.star-bg{background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(2px 2px at 40px 70px,rgba(255,255,255,.8),transparent),radial-gradient(1px 1px at 90px 40px,#fff,transparent),radial-gradient(2px 2px at 160px 120px,rgba(255,255,255,.9),transparent);background-size:200px 200px}.glow{text-shadow:0 0 20px rgba(168,85,247,.6),0 0 40px rgba(99,102,241,.4)}
+
+/* Liquid Glass navigation */
+.liquid-nav{
+  position:sticky;top:12px;z-index:40;
+  margin:0 12px;
+  border:1px solid rgba(255,255,255,.20)!important;
+  border-radius:24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.025) 45%,rgba(120,90,255,.045))!important;
+  backdrop-filter:blur(14px) saturate(135%);
+  -webkit-backdrop-filter:blur(14px) saturate(135%);
+  box-shadow:0 10px 35px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(255,255,255,.06);
+  overflow:visible;
+}
+.liquid-nav::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.09),transparent 28%,transparent 68%,rgba(255,255,255,.035));
+}
+.liquid-nav::after{
+  content:"";position:absolute;left:8%;right:8%;top:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.40),transparent);
+}
+.liquid-nav{position:sticky;top:8px;z-index:40}.liquid-nav>div{position:relative;z-index:1}
+@media(max-width:767px){
+  .liquid-nav{margin:8px 8px 0;border-radius:22px;padding-top:11px;padding-bottom:11px}
+}
+
+
+.menu-toggle{width:46px;height:46px;border:0;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;cursor:pointer;position:relative}
+.menu-toggle span{display:block;width:30px;height:3px;border-radius:99px;background:#f3f4f6;transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .22s ease,width .35s ease,background .25s ease;transform-origin:center}
+.menu-toggle.active span:nth-child(1){transform:translateY(9px) rotate(45deg)}
+.menu-toggle.active span:nth-child(2){opacity:0;width:12px}
+.menu-toggle.active span:nth-child(3){transform:translateY(-9px) rotate(-45deg)}
+#menu{position:absolute;top:calc(100% + 12px);left:8px;right:8px;max-height:0;opacity:0;overflow:hidden;transform:translateY(-12px) scale(.985);transform-origin:top center;pointer-events:none;padding:0 14px;border-radius:28px;background:linear-gradient(135deg,rgba(70,78,98,.72) 0%,rgba(30,38,62,.82) 38%,rgba(12,20,42,.86) 100%);backdrop-filter:blur(30px) saturate(175%) brightness(112%) contrast(106%);-webkit-backdrop-filter:blur(30px) saturate(175%) brightness(112%) contrast(106%);border:1px solid rgba(255,255,255,.30);box-shadow:0 30px 80px rgba(0,0,0,.58),0 10px 28px rgba(8,12,30,.34),inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(255,255,255,.12),inset 0 0 55px rgba(148,163,184,.11);isolation:isolate;transition:max-height .55s var(--ease-smooth),opacity .38s ease,transform .55s var(--ease-spring),padding .55s var(--ease-smooth),box-shadow .45s ease}
+#menu::before{content:"";position:absolute;inset:1px;border-radius:27px;pointer-events:none;background:radial-gradient(ellipse at 18% 0%,rgba(255,255,255,.26),transparent 27%),radial-gradient(ellipse at 78% 8%,rgba(147,197,253,.12),transparent 25%),radial-gradient(ellipse at 50% 105%,rgba(168,85,247,.16),transparent 42%),linear-gradient(115deg,rgba(255,255,255,.12),transparent 24%,transparent 65%,rgba(99,102,241,.12));mix-blend-mode:screen;opacity:.9}
+#menu::after{content:"";position:absolute;top:1px;left:7%;right:7%;height:2px;border-radius:999px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.72) 18%,rgba(255,255,255,.25) 48%,rgba(255,255,255,.58) 82%,transparent);box-shadow:0 0 18px rgba(255,255,255,.16),0 1px 3px rgba(255,255,255,.14);pointer-events:none}
+#menu .mobile-menu-item{background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.025));box-shadow:inset 0 1px 0 rgba(255,255,255,.075),inset 0 -1px 0 rgba(0,0,0,.10);backdrop-filter:blur(10px) saturate(130%);-webkit-backdrop-filter:blur(10px) saturate(130%)}
+#menu .mobile-menu-item:hover{background:linear-gradient(90deg,rgba(255,255,255,.11),rgba(129,140,248,.08));box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 6px 20px rgba(0,0,0,.12)}
+#menu.menu-open{max-height:430px;opacity:1;transform:translateY(0) scale(1);pointer-events:auto;padding-top:14px;padding-bottom:14px}
+#menu .mobile-menu-item{position:relative;z-index:1;opacity:0;transform:translateY(-8px);transition:opacity .34s ease,transform .45s var(--ease-smooth),background .3s ease,box-shadow .3s ease;border:1px solid transparent}
+#menu.menu-open .mobile-menu-item{opacity:1;transform:translateY(0)}
+#menu.menu-open .mobile-menu-item:nth-child(1){transition-delay:.04s}
+#menu.menu-open .mobile-menu-item:nth-child(2){transition-delay:.08s}
+#menu.menu-open .mobile-menu-item:nth-child(3){transition-delay:.12s}
+#menu.menu-open .mobile-menu-item:nth-child(4){transition-delay:.16s}
+#menu.menu-open .mobile-menu-item:nth-child(5){transition-delay:.20s}
+
+/* Ultra-smooth motion system */
+:root{--ease-smooth:cubic-bezier(.22,1,.36,1);--ease-spring:cubic-bezier(.16,1,.3,1)}
+button,[role=button],.cursor-pointer,.glass-card,.home-glass-card,.mobile-menu-item{ -webkit-tap-highlight-color:transparent; }
+button,[role=button]{transition:transform .32s var(--ease-smooth),opacity .28s ease,background-color .32s ease,box-shadow .32s ease,border-color .32s ease,color .25s ease;}
+button:active,[role=button]:active,.cursor-pointer:active{transform:scale(.975);}
+.view{will-change:opacity,transform,filter;transform-origin:50% 0;}
+.view.view-enter{animation:astroPageIn .62s var(--ease-spring) both;}
+.view.view-exit{animation:astroPageOut .34s var(--ease-smooth) both;}
+@keyframes astroPageIn{0%{opacity:0;transform:translate3d(0,22px,0) scale(.982);filter:blur(5px)}55%{opacity:.9;filter:blur(1.2px)}100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}}
+@keyframes astroPageOut{0%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}100%{opacity:0;transform:translate3d(0,-10px,0) scale(.995);filter:blur(2px)}}
+.view-enter .glass-card,.view-enter .home-glass-card{animation:astroCardIn .58s var(--ease-spring) both;}
+.view-enter .glass-card:nth-child(1),.view-enter .home-glass-card:nth-child(1){animation-delay:.035s}.view-enter .glass-card:nth-child(2),.view-enter .home-glass-card:nth-child(2){animation-delay:.075s}.view-enter .glass-card:nth-child(3),.view-enter .home-glass-card:nth-child(3){animation-delay:.115s}.view-enter .glass-card:nth-child(4),.view-enter .home-glass-card:nth-child(4){animation-delay:.155s}.view-enter .glass-card:nth-child(5),.view-enter .home-glass-card:nth-child(5){animation-delay:.195s}.view-enter .glass-card:nth-child(6),.view-enter .home-glass-card:nth-child(6){animation-delay:.235s}.view-enter .glass-card:nth-child(n+7){animation-delay:.275s}
+@keyframes astroCardIn{0%{opacity:0;transform:translate3d(0,18px,0) scale(.975);filter:blur(3px)}65%{opacity:1;filter:blur(.3px)}100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}}
+/* Smooth interactive cards */
+.glass-card{will-change:transform,box-shadow;transition:transform .58s var(--ease-smooth),box-shadow .58s var(--ease-smooth),border-color .45s ease,background .45s ease,opacity .58s var(--ease-smooth),filter .58s var(--ease-smooth);}
+.glass-card:hover{transform:translateY(-5px) scale(1.008)}
+.glass-card.selectable-card{transition:transform .58s cubic-bezier(.22,1,.36,1),opacity .58s cubic-bezier(.22,1,.36,1),filter .58s cubic-bezier(.22,1,.36,1),box-shadow .58s cubic-bezier(.22,1,.36,1),border-color .58s cubic-bezier(.22,1,.36,1),background .58s cubic-bezier(.22,1,.36,1);will-change:transform,opacity,filter}
+.glass-card.is-selected{position:relative;z-index:50;transform:translateY(-8px) scale(1.075);border:1.5px solid rgba(245,230,255,.86)!important;background:linear-gradient(135deg,rgba(168,85,247,.18),rgba(38,49,75,.62) 48%,rgba(10,16,35,.76));box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 14px 34px rgba(0,0,0,.30),0 0 0 1px rgba(192,132,252,.22),0 0 42px rgba(168,85,247,.52),0 0 78px rgba(99,102,241,.22);filter:saturate(1.10) brightness(1.07)}
+.glass-card.is-selected::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,transparent 28%,rgba(255,255,255,.055) 50%,transparent 72%);background-size:220% 100%;animation:selectedCardShine 4.8s ease-in-out infinite;opacity:1!important}
+.glass-card.is-selected::after{content:'';position:absolute;inset:-3px;border-radius:inherit;pointer-events:none;border:1px solid rgba(216,180,254,.14);filter:blur(1px);opacity:1!important}
+.glass-card.is-selected h3{color:#fff;text-shadow:0 0 12px rgba(216,180,254,.28)}
+.glass-card.is-selected .text-gray-300,.glass-card.is-selected .text-gray-400{color:rgba(255,255,255,.88)}
+.glass-card.is-selected p,.glass-card.is-selected span,.glass-card.is-selected b{filter:brightness(1.03)}
+.glass-card.is-dimmed{opacity:.48;transform:scale(.988);filter:saturate(.75) brightness(.72)}
+@media(hover:hover) and (pointer:fine){.glass-card.selectable-card:hover{transform:translateY(-3px)}.glass-card.selectable-card.is-selected:hover{transform:translateY(-7px) scale(1.065)}}
+.glass-card.selectable-card:active{transform:translateY(-1px) scale(.995)}
+.glass-card.selectable-card.is-selected:active{transform:translateY(-4px) scale(1.045)}
+@keyframes selectedCardPulse{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.58),0 18px 42px rgba(0,0,0,.38),0 0 0 1px rgba(192,132,252,.34),0 0 34px rgba(168,85,247,.38)}50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.68),0 20px 46px rgba(0,0,0,.40),0 0 0 1px rgba(216,180,254,.48),0 0 42px rgba(168,85,247,.50)}}
+@keyframes selectedCardShine{0%,35%{background-position:180% 0}65%,100%{background-position:-30% 0}}
+
+#modal{opacity:0;visibility:hidden;pointer-events:none;background:rgba(0,0,0,.18);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);transition:opacity .62s var(--ease-smooth),visibility 0s linear .62s,backdrop-filter .62s var(--ease-smooth),-webkit-backdrop-filter .62s var(--ease-smooth);}
+#modal.modal-active{opacity:1;visibility:visible;pointer-events:auto;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);transition-delay:0s;}
+#modal.modal-closing{opacity:0;visibility:visible;pointer-events:none;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);transition-delay:0s;}
+#modal.planet-open{background:rgba(0,0,0,.18)!important;}
+#modal.planet-open>div{background:linear-gradient(135deg,rgba(17,24,39,.24),rgba(15,23,42,.14))!important;backdrop-filter:blur(8px) saturate(125%);-webkit-backdrop-filter:blur(8px) saturate(125%);border-color:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 24px 70px rgba(0,0,0,.28);}
+#modal.planet-open .bg-gray-900\/60{background:rgba(15,23,42,.10)!important;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border-color:rgba(255,255,255,.08)!important;}
+#modal>div{opacity:0;transform:translate3d(0,28px,0) scale(.94);filter:blur(8px);will-change:transform,opacity,filter;transition:opacity .62s var(--ease-spring),transform .76s var(--ease-spring),filter .62s var(--ease-spring);}
+#modal.modal-active>div{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0);}
+#modal.modal-closing>div{opacity:0;transform:translate3d(0,18px,0) scale(.965);filter:blur(5px);transition-duration:.48s;}
+#modal.modal-active #mt,#modal.modal-active #ms,#modal.modal-active #mb,#modal.modal-active .mt-7{animation:astroModalContentIn .65s cubic-bezier(.16,1,.3,1) both;}
+#modal.modal-active #ms{animation-delay:.035s;}
+#modal.modal-active #mb{animation-delay:.07s;}
+#modal.modal-active .mt-7{animation-delay:.11s;}
+@keyframes astroModalContentIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.view,.view-enter .glass-card,.view-enter .home-glass-card,#modal,#modal>div,#modal.modal-active #mt,#modal.modal-active #ms,#modal.modal-active #mb,#modal.modal-active .mt-7,button,[role=button],.glass-card,.home-glass-card{animation:none!important;transition:none!important;filter:none!important;transform:none!important}}
+
+
+/* Global glass interaction polish */
+.glass-card::after,.home-glass-card::after{transition:opacity .5s var(--ease-smooth),transform .7s var(--ease-smooth);}
+.glass-card:hover::after,.home-glass-card:hover::after{transform:scale(1.12) translate3d(-4px,4px,0);}
+/* Realistic Liquid Glass cards for the home page */
+.home-glass-card{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.055) 38%,rgba(12,18,38,.72) 100%);backdrop-filter:blur(22px) saturate(145%) brightness(1.06);-webkit-backdrop-filter:blur(22px) saturate(145%) brightness(1.06);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.20),inset 0 -1px 0 rgba(0,0,0,.22),0 18px 45px rgba(0,0,0,.20);transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s,border-color .45s,background .45s}
+.home-glass-card::before{content:"";position:absolute;inset:1px;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.20),transparent 28%,transparent 68%,rgba(255,255,255,.035));opacity:.7;z-index:-1}
+.home-glass-card::after{content:"";position:absolute;width:180px;height:120px;right:-55px;top:-60px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.22),transparent 70%);filter:blur(18px);pointer-events:none;z-index:-1}
+.home-glass-card:hover{transform:translateY(-7px) scale(1.012);border-color:rgba(216,180,254,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.27),0 24px 55px rgba(0,0,0,.30),0 0 35px rgba(139,92,246,.10)}
+.home-glass-card .home-icon{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 20px rgba(0,0,0,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+@media(max-width:767px){.home-glass-card{backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%)}}
+@media(prefers-reduced-motion:reduce){.home-glass-card{transition:none}.home-glass-card:hover{transform:none}}
+
+.countdown-card{position:relative;isolation:isolate;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(168,85,247,.08) 42%,rgba(8,13,30,.78));border:1px solid rgba(216,180,254,.22);backdrop-filter:blur(24px) saturate(145%);-webkit-backdrop-filter:blur(24px) saturate(145%);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 20px 55px rgba(0,0,0,.22)}
+.countdown-glow{position:absolute;width:280px;height:180px;right:-80px;top:-90px;border-radius:50%;background:radial-gradient(circle,rgba(236,72,153,.24),transparent 68%);filter:blur(24px);pointer-events:none}
+.countdown-digits>div{min-width:0;text-align:center;padding:12px 8px;border-radius:16px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.countdown-digits b{display:block;font-size:clamp(1.35rem,4vw,2.2rem);font-variant-numeric:tabular-nums;letter-spacing:.02em;color:#fff}
+.countdown-digits span{display:block;margin-top:2px;font-size:.72rem;color:rgba(216,180,254,.72)}
+.countdown-source-btn{position:absolute;right:16px;top:16px;z-index:20;width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:rgba(245,230,255,.92);background:linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 22px rgba(0,0,0,.18);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%);cursor:pointer}
+.countdown-source-btn i{font-size:1rem;filter:drop-shadow(0 0 9px rgba(216,180,254,.26))}
+.countdown-source-btn:hover{transform:translateY(-2px) scale(1.035);border-color:rgba(216,180,254,.40);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 12px 26px rgba(0,0,0,.22),0 0 24px rgba(168,85,247,.14)}
+.countdown-source-btn:active{transform:scale(.96)}
+.event-source-box{border-top:1px solid rgba(255,255,255,.10);padding-top:1rem;margin-top:.2rem}
+.event-source-box a,.source-modal-link{color:rgba(216,180,254,.92);text-decoration:none;transition:color .25s ease,opacity .25s ease}
+.event-source-box a:hover,.source-modal-link:hover{color:#fff;text-decoration:underline}
+.source-modal-list{display:grid;gap:.65rem}
+.source-modal-item{display:flex;align-items:flex-start;gap:.75rem;padding:.85rem 1rem;border-radius:14px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.source-modal-item i{width:24px;margin-top:2px;color:rgba(216,180,254,.90)}
+@media(max-width:640px){.countdown-source-btn{right:12px;top:12px}.countdown-card{padding-top:4.3rem}.countdown-digits{gap:6px}.countdown-digits>div{padding:10px 4px;border-radius:13px}.countdown-digits b{font-size:1.35rem}}
+</style></head>
+<body class="star-bg min-h-screen flex flex-col">
+<nav class="liquid-nav glass-panel px-4 py-3"><div class="max-w-7xl mx-auto flex justify-between items-center"><div onclick="show('home')" class="flex items-center gap-3 cursor-pointer"><div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-xl"><i class="fa-solid fa-user-astronaut"></i></div><b class="text-2xl bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-300">AstroVerse</b></div><div class="hidden md:flex gap-2"><button onclick="show('home')" class="px-4 py-2 rounded-lg hover:bg-gray-800">หน้าแรก</button><button onclick="show('history')" class="px-4 py-2 rounded-lg hover:bg-gray-800">ประวัติศาสตร์</button><button onclick="show('calendar')" class="px-4 py-2 rounded-lg hover:bg-gray-800">วันสำคัญ</button><button onclick="show('zodiac')" class="px-4 py-2 rounded-lg hover:bg-gray-800">12 ราศี</button><button onclick="show('solar')" class="px-4 py-2 rounded-lg hover:bg-gray-800">ระบบสุริยะ</button><button onclick="show('knowledge')" class="px-4 py-2 rounded-lg hover:bg-gray-800">เกร็ดความรู้</button></div><button id="menuToggle" class="menu-toggle md:hidden" onclick="toggleMenu()" aria-label="เปิดเมนู" aria-expanded="false"><span></span><span></span><span></span></button></div><div id="menu" class="md:hidden mt-3 pt-3 border-t border-gray-800 space-y-1"><button onclick="show('home')" class="mobile-menu-item block w-full text-left p-3 rounded-xl hover:bg-white/10">หน้าแรก</button><button onclick="show('history')" class="mobile-menu-item block w-full text-left p-3 rounded-xl hover:bg-white/10">ประวัติศาสตร์</button><button onclick="show('calendar')" class="mobile-menu-item block w-full text-left p-3 rounded-xl hover:bg-white/10">วันสำคัญ</button><button onclick="show('zodiac')" class="mobile-menu-item block w-full text-left p-3 rounded-xl hover:bg-white/10">12 ราศี</button><button onclick="show('solar')" class="mobile-menu-item block w-full text-left p-3 rounded-xl hover:bg-white/10">ระบบสุริยะ</button><button onclick="show('knowledge')" class="mobile-menu-item block w-full text-left p-3 rounded-xl hover:bg-white/10">เกร็ดความรู้</button></div></nav>
+<main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+<section id="home" class="view space-y-12 py-10"><div class="text-center max-w-3xl mx-auto space-y-6"><span class="inline-block px-4 py-2 rounded-full glass-panel text-purple-300 text-xs">✦ ยินดีต้อนรับสู่ห้วงอวกาศแห่งความรู้</span><h1 class="text-4xl md:text-6xl font-black leading-tight">ข้อจำกัดเดียวของมนุษย์<br>คือ <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-amber-300 glow">จินตนาการที่เรามีต่อจักรวาล</span></h1><p class="text-gray-400 text-lg">ออกเดินทางสำรวจประวัติศาสตร์อวกาศ วันสำคัญ กลุ่มดาว 12 ราศี และระบบสุริยะผ่าน AstroVerse</p></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+<div onclick="show('history')" class="home-glass-card rounded-2xl p-6 cursor-pointer min-h-[210px]"><div class="home-icon text-purple-300 text-2xl mb-4"><i class="fa-solid fa-book-open"></i></div><h3 class="text-xl font-bold mb-2">ประวัติศาสตร์อวกาศ</h3><p class="text-gray-400 text-sm">จากกาลิเลโอ ยุคแข่งอวกาศ จนถึงกล้อง James Webb</p><div class="text-purple-400 mt-5">เข้าชมเนื้อหา →</div></div>
+<div onclick="show('calendar')" class="home-glass-card rounded-2xl p-6 cursor-pointer min-h-[210px]"><div class="home-icon text-pink-300 text-2xl mb-4"><i class="fa-solid fa-calendar-days"></i></div><h3 class="text-xl font-bold mb-2">วันสำคัญทางอวกาศ</h3><p class="text-gray-400 text-sm">สำรวจวันสำคัญและปรากฏการณ์ดาราศาสตร์</p><div class="text-pink-400 mt-5">เข้าชมเนื้อหา →</div></div>
+<div onclick="show('zodiac')" class="home-glass-card rounded-2xl p-6 cursor-pointer min-h-[210px]"><div class="home-icon text-amber-300 text-2xl mb-4"><i class="fa-solid fa-star-and-crescent"></i></div><h3 class="text-xl font-bold mb-2">12 จักรราศี</h3><p class="text-gray-400 text-sm">สำรวจกลุ่มดาวและค้นหาราศีจากวันเกิด</p><div class="text-amber-400 mt-5">เข้าชมเนื้อหา →</div></div>
+<div onclick="show('solar')" class="home-glass-card rounded-2xl p-6 cursor-pointer min-h-[210px]"><div class="home-icon text-cyan-300 text-2xl mb-4"><i class="fa-solid fa-sun"></i></div><h3 class="text-xl font-bold mb-2">แบบจำลองระบบสุริยะ</h3><p class="text-gray-400 text-sm">ดูการโคจรของดาวเคราะห์แบบ Interactive</p><div class="text-cyan-400 mt-5">เข้าชมเนื้อหา →</div></div>
+<div onclick="show('knowledge')" class="home-glass-card rounded-2xl p-6 cursor-pointer min-h-[210px]"><div class="w-14 h-14 rounded-2xl bg-fuchsia-500/10 border border-fuchsia-300/20 flex items-center justify-center text-3xl mb-4"><i class="fa-solid fa-wand-magic-sparkles text-fuchsia-300"></i></div><h3 class="text-xl font-bold mb-2">เกร็ดความรู้</h3><p class="text-gray-400 text-sm">สำรวจเรื่องน่ารู้เกี่ยวกับโลก ระบบสุริยะ ดาวฤกษ์ และจักรวาล</p><div class="text-yellow-300 mt-5">เลือกหัวข้อ →</div></div>
+</div></section>
+<section id="history" class="view hidden space-y-6"><button onclick="show('home')">← ย้อนกลับหน้าแรก</button><h2 class="text-3xl font-bold">ประวัติศาสตร์การสำรวจอวกาศ</h2><div id="historyList" class="space-y-5 border-l-2 border-purple-500/30 ml-4 pl-6"></div></section>
+<section id="calendar" class="view hidden space-y-6"><button onclick="show('home')">← ย้อนกลับหน้าแรก</button><h2 class="text-3xl font-bold">วันสำคัญ & ปรากฏการณ์ทางดาราศาสตร์</h2><div class="countdown-card rounded-3xl p-5 md:p-7 overflow-hidden relative"><div class="countdown-glow"></div><button type="button" class="countdown-source-btn" onclick="openSourceModal()" aria-label="ดูแหล่งที่มาของข้อมูล" title="ดูแหล่งที่มาของข้อมูล"><i class="fa-solid fa-circle-info"></i></button><div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"><div><span class="text-xs uppercase tracking-[0.28em] text-pink-300/80">NEXT SPACE EVENT</span><h3 class="text-2xl md:text-3xl font-black mt-2">☄️ ฝนดาวตก Draconids</h3><p class="text-gray-400 mt-2">ช่วงคืนที่คาดว่าจะเห็นได้ดีที่สุด: 8–9 ตุลาคม 2026</p><p id="countdownStatus" class="text-sm text-purple-300 mt-3">กำลังคำนวณเวลาที่เหลือ...</p></div><div class="countdown-digits grid grid-cols-4 gap-2 md:gap-3 min-w-0 lg:min-w-[430px]"><div><b id="cdDays">--</b><span>วัน</span></div><div><b id="cdHours">--</b><span>ชั่วโมง</span></div><div><b id="cdMinutes">--</b><span>นาที</span></div><div><b id="cdSeconds">--</b><span>วินาที</span></div></div></div></div><div id="calendarGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div></section>
+<section id="zodiac" class="view hidden space-y-8"><button onclick="show('home')">← ย้อนกลับหน้าแรก</button><div class="glass-panel rounded-2xl p-6 text-center max-w-2xl mx-auto"><h2 class="text-2xl font-bold">ค้นหาราศีประจำตัว</h2><p class="text-gray-400 my-3">เลือกวันและเดือนเกิด</p><div class="flex flex-col sm:flex-row gap-3 justify-center"><select id="day" class="bg-gray-900 rounded-xl p-3"></select><select id="month" class="bg-gray-900 rounded-xl p-3"><option value="1">มกราคม</option><option value="2">กุมภาพันธ์</option><option value="3">มีนาคม</option><option value="4">เมษายน</option><option value="5">พฤษภาคม</option><option value="6">มิถุนายน</option><option value="7">กรกฎาคม</option><option value="8">สิงหาคม</option><option value="9">กันยายน</option><option value="10">ตุลาคม</option><option value="11">พฤศจิกายน</option><option value="12">ธันวาคม</option></select><button onclick="checkZodiac()" class="bg-amber-500 text-gray-950 font-bold rounded-xl px-6 py-3">เช็คราศี</button></div></div><div id="zodiacGrid" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"></div></section>
+<section id="solar" class="view hidden space-y-6"><button onclick="show('home')">← ย้อนกลับหน้าแรก</button><div class="flex justify-between gap-4"><div><h2 class="text-3xl font-bold">แบบจำลองระบบสุริยะ</h2><p class="text-gray-400">แตะดาวเคราะห์เพื่อดูข้อมูล</p></div><button id="play" onclick="toggleOrbit()" class="bg-gray-800 rounded-xl px-4 py-2">หยุด</button></div><div class="glass-panel rounded-2xl p-3 border border-cyan-500/30 relative"><div id="solarLoading" class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-gray-950/90 text-cyan-300 font-semibold">โปรดรอสักครู่...</div><canvas id="canvas" class="block mx-auto cursor-pointer"></canvas></div></section>
+<section id="knowledge" class="view hidden space-y-8"><button onclick="show('home')">← ย้อนกลับหน้าแรก</button><div><h2 class="text-3xl font-bold">เกร็ดความรู้เกี่ยวกับจักรวาล</h2><p class="text-gray-400 mt-2">เลือกหัวข้อที่อยากสำรวจ แล้วเปิดอ่านเรื่องน่ารู้แบบสั้น กระชับ และเข้าใจง่าย</p></div><div id="knowledgeGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div></section>
+
+</main>
+<div id="modal" class="hidden fixed inset-0 z-50 bg-black/35 backdrop-blur-[3px] flex items-center justify-center p-4"><div class="glass-panel rounded-2xl max-w-xl w-full p-6 max-h-[90vh] overflow-y-auto"><div class="flex items-start gap-4"><div class="min-w-0 flex-1"><span id="mi" class="text-3xl"></span><h3 id="mt" class="text-2xl font-bold mt-1"></h3><p id="ms" class="text-purple-400"></p></div></div><div id="mb" class="mt-5 text-gray-300 leading-relaxed"></div><div class="mt-7 pt-4 border-t border-gray-800 flex justify-center"><button onclick="closeModal()" class="min-w-[120px] px-6 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 text-sm font-semibold transition">ปิด</button></div></div></div>
+<footer class="glass-panel border-t border-gray-800 mt-12 py-7 text-center text-gray-500 text-sm">เว็บไซต์นี้สร้างขึ้นเพื่อการศึกษาและการเรียนรู้ด้านอวกาศและดาราศาสตร์<br><span class="text-purple-400">AstroVerse © 2026</span><br><span class="text-gray-500">PHIRAPHAT ร่วมกับ ChatGPT</span></footer>
+<script>
+const historyData=[
+['1609','กาลิเลโอและกล้องโทรทรรศน์','กาลิเลโอ กาลิเลอีปรับปรุงกล้องโทรทรรศน์และใช้สังเกตท้องฟ้าอย่างเป็นระบบ เขาพบดวงจันทร์ 4 ดวงใหญ่ของดาวพฤหัสบดี เห็นพื้นผิวขรุขระของดวงจันทร์ และพบว่าเฟสของดาวศุกร์สนับสนุนแนวคิดว่าดาวเคราะห์โคจรรอบดวงอาทิตย์','เหตุการณ์นี้เปลี่ยนวิธีที่มนุษย์มองจักรวาลจากการอาศัยเพียงการสังเกตด้วยตาเปล่าไปสู่การใช้เครื่องมือทางวิทยาศาสตร์'],
+['1687','กฎการเคลื่อนที่และแรงโน้มถ่วงของนิวตัน','ไอแซก นิวตันเสนอหลักการสำคัญเกี่ยวกับการเคลื่อนที่และแรงโน้มถ่วง ซึ่งช่วยอธิบายว่าทำไมวัตถุจึงตกลงสู่พื้นและทำไมดวงจันทร์กับดาวเคราะห์จึงสามารถโคจรได้','แนวคิดนี้กลายเป็นพื้นฐานของกลศาสตร์ท้องฟ้าและการคำนวณวงโคจรของยานอวกาศในเวลาต่อมา'],
+['1929','การขยายตัวของเอกภพ','การสังเกตกาแล็กซีจำนวนมากนำไปสู่หลักฐานว่าเอกภพกำลังขยายตัว กาแล็กซีที่อยู่ไกลมีแนวโน้มถอยห่างเร็วขึ้น','แนวคิดเรื่องเอกภพที่กำลังขยายตัวเป็นหนึ่งในรากฐานของจักรวาลวิทยาสมัยใหม่'],
+['1957','Sputnik 1','สหภาพโซเวียตส่ง Sputnik 1 ขึ้นสู่วงโคจร เป็นดาวเทียมประดิษฐ์ดวงแรกของโลก ส่งสัญญาณวิทยุกลับมายังโลกและพิสูจน์ว่าการส่งวัตถุขึ้นสู่วงโคจรเป็นไปได้','การปล่อย Sputnik จุดชนวนการแข่งขันด้านอวกาศและเร่งการพัฒนาเทคโนโลยีจรวด ดาวเทียม และการสื่อสาร'],
+['1961','ยูริ กาการิน — มนุษย์คนแรกในอวกาศ','ยูริ กาการินเดินทางด้วยยาน Vostok 1 และโคจรรอบโลกหนึ่งรอบ ก่อนกลับลงสู่พื้นโลกอย่างปลอดภัย','เที่ยวบินนี้แสดงให้เห็นว่ามนุษย์สามารถอยู่รอดและทำภารกิจในสภาพแวดล้อมอวกาศได้'],
+['1969','Apollo 11','นีล อาร์มสตรองและบัซซ์ อัลดรินลงบนดวงจันทร์ ขณะที่ไมเคิล คอลลินส์ปฏิบัติหน้าที่บนวงโคจรดวงจันทร์','ภารกิจนี้เป็นก้าวสำคัญของการสำรวจดวงจันทร์และแสดงศักยภาพของระบบจรวด ยานอวกาศ การนำทาง และการสื่อสาร'],
+['1977','Voyager 1 และ Voyager 2','ยาน Voyager ถูกส่งไปศึกษาดาวเคราะห์ชั้นนอก โดยใช้ประโยชน์จากการเรียงตัวของดาวเคราะห์เพื่อเดินทางต่อไปยังบริเวณไกลของระบบสุริยะ','ข้อมูลจาก Voyager ช่วยให้มนุษย์เข้าใจดาวพฤหัสบดี ดาวเสาร์ ดาวยูเรนัส และดาวเนปจูนมากขึ้น'],
+['1990','กล้องโทรทรรศน์อวกาศ Hubble','Hubble ถูกส่งขึ้นสู่อวกาศเพื่อสังเกตเอกภพโดยไม่ถูกรบกวนจากบรรยากาศโลก สร้างภาพและข้อมูลเกี่ยวกับดาว เนบิวลา กาแล็กซี และเอกภพยุคไกล','Hubble ช่วยให้เกิดการค้นพบและการวัดทางดาราศาสตร์จำนวนมาก และทำให้ภาพอวกาศกลายเป็นสิ่งที่ผู้คนทั่วโลกเข้าถึงได้'],
+['2004','ยานสำรวจ Cassini–Huygens','ภารกิจ Cassini ศึกษาดาวเสาร์ วงแหวน และดวงจันทร์บริวาร โดยยาน Huygens ลงสู่พื้นผิวดวงจันทร์ไททัน','ภารกิจนี้เผยให้เห็นโลกที่ซับซ้อนของดาวเสาร์ รวมถึงทะเลสาบไฮโดรคาร์บอนบนไททันและหลักฐานเกี่ยวกับมหาสมุทรใต้พื้นผิวยูโรปา'],
+['2012','ยาน Curiosity บนดาวอังคาร','รถสำรวจ Curiosity ลงจอดบนดาวอังคารและศึกษาหิน ดิน บรรยากาศ และสภาพแวดล้อมในอดีตของดาวเคราะห์','ข้อมูลช่วยให้นักวิทยาศาสตร์ประเมินว่าดาวอังคารในอดีตเคยมีสภาพแวดล้อมที่เหมาะต่อการดำรงอยู่ของจุลชีพหรือไม่'],
+['2015','New Horizons ผ่านดาวพลูโต','ยาน New Horizons เดินทางผ่านดาวพลูโตและส่งภาพกับข้อมูลรายละเอียดสูงกลับมายังโลก','ภารกิจเปิดมุมมองใหม่เกี่ยวกับดาวเคราะห์แคระและวัตถุในแถบไคเปอร์ แม้พลูโตจะไม่อยู่ในแบบจำลองระบบสุริยะของเว็บไซต์นี้เพราะไม่ใช่หนึ่งใน 8 ดาวเคราะห์'],
+['2021–ปัจจุบัน','James Webb และยุคสำรวจอวกาศรุ่นใหม่','กล้อง James Webb Space Telescope เริ่มปฏิบัติงานเพื่อศึกษาดาวฤกษ์ กาแล็กซี และบรรยากาศของดาวเคราะห์นอกระบบ ขณะเดียวกันโครงการ Artemis มุ่งพัฒนาการสำรวจดวงจันทร์และภารกิจระยะไกล','ยุคนี้เน้นการศึกษากำเนิดเอกภพ ดาวเคราะห์นอกระบบ และการสร้างความสามารถสำหรับการสำรวจดวงจันทร์และดาวอังคารในอนาคต']
+];
+const calendarData=[
+['5 ตุลาคม','ดวงจันทร์เข้าใกล้ดาวอังคาร','ดวงจันทร์และดาวอังคารจะปรากฏใกล้กันบนท้องฟ้าในวันที่ 5 ตุลาคม 2026 โดยพื้นที่ต่าง ๆ จะเห็นความใกล้ชิดแตกต่างกัน','เป็นปรากฏการณ์ที่เหมาะสำหรับสังเกตการเคลื่อนที่ปรากฏของดวงจันทร์เทียบกับดาวเคราะห์'],
+['6 ตุลาคม','ดวงจันทร์เข้าใกล้ดาวพฤหัสบดี','ดวงจันทร์จะเข้าใกล้ดาวพฤหัสบดีในวันที่ 6 ตุลาคม 2026 และบางพื้นที่อาจเห็นการบังดาวพฤหัสบดี','ประเทศไทยอาจเห็นเป็นการเข้าใกล้บนท้องฟ้า ขณะที่การบังเกิดเฉพาะบางบริเวณของโลก'],
+['7 ตุลาคม','ดาวพุธเข้าใกล้ดาวศุกร์','ดาวพุธและดาวศุกร์จะปรากฏอยู่ใกล้กันบนท้องฟ้าช่วงวันที่ 7 ตุลาคม 2026','ควรมองต่ำใกล้ขอบฟ้าด้านทิศตะวันตกหลังพระอาทิตย์ตก และสภาพขอบฟ้าต้องเปิดโล่ง'],
+['8–9 ตุลาคม','ฝนดาวตกดราโคนิดส์ (Draconids)','ฝนดาวตกดราโคนิดส์มีช่วงสูงสุดประมาณคืน 8–9 ตุลาคม 2026 และปีนี้อยู่ใกล้ช่วงดวงจันทร์ใหม่ ทำให้ท้องฟ้ามืดเหมาะต่อการสังเกต','เป็นฝนดาวตกที่อัตราสูงสุดแปรผันมาก จึงไม่ควรคาดว่าจะมีดาวตกจำนวนมากทุกปี'],
+['10 ตุลาคม','ดวงจันทร์ดับ (New Moon)','ดวงจันทร์อยู่ในตำแหน่งที่หันด้านสว่างออกจากโลกเกือบทั้งหมด ทำให้ท้องฟ้ามืดและเหมาะกับการดูดาว','เป็นคืนที่ดีสำหรับการสังเกตวัตถุท้องฟ้าที่จาง หากท้องฟ้าไม่มีเมฆและมลภาวะแสงต่ำ'],
+['12 ตุลาคม','ดาวพุธห่างดวงอาทิตย์มากที่สุดทางตะวันออก','ดาวพุธถึงตำแหน่ง Greatest Elongation East ในวันที่ 12 ตุลาคม 2026 ทำให้มีโอกาสสังเกตดาวพุธในท้องฟ้ายามเย็น','ต้องมองใกล้ขอบฟ้าหลังพระอาทิตย์ตกและควรมีขอบฟ้าด้านตะวันตกที่เปิดโล่ง'],
+['14 ตุลาคม','ฝนดาวตก Southern Taurids สูงสุด','ฝนดาวตก Southern Taurids มีจุดสูงสุดประจำปีในช่วงกลางเดือนตุลาคม และเป็นฝนดาวตกที่ขึ้นชื่อเรื่องโอกาสพบลูกไฟ','อัตราดาวตกไม่สูงมาก แต่ดาวตกบางดวงอาจสว่างเป็นพิเศษ'],
+['21–22 ตุลาคม','ฝนดาวตกโอไรออนิดส์ (Orionids)','ฝนดาวตกโอไรออนิดส์ถึงจุดสูงสุดประมาณคืน 21–22 ตุลาคม 2026 และเกิดจากเศษฝุ่นของดาวหางฮัลเลย์','ปี 2026 แสงจันทร์อาจรบกวนดาวตกที่จาง แต่ดาวตกสว่างยังมีโอกาสมองเห็นได้'],
+['26 ตุลาคม','พระจันทร์เต็มดวง — Hunter’s Moon','พระจันทร์เต็มดวงเดือนตุลาคม 2026 ซึ่งมีชื่อดั้งเดิมว่า Hunter’s Moon','ช่วงพระจันทร์เต็มดวงเหมาะกับการชมดวงจันทร์ แต่แสงจันทร์จะทำให้ดาวตกและวัตถุจาง ๆ มองเห็นยากขึ้น'],
+['27–28 ตุลาคม','ดวงจันทร์เข้าใกล้กระจุกดาวลูกไก่ (Pleiades)','ดวงจันทร์จะเข้าใกล้กระจุกดาวลูกไก่ในช่วง 27–28 ตุลาคม 2026 และบางพื้นที่อาจเกิดการบัง','เป็นโอกาสดีในการเปรียบเทียบการเคลื่อนที่ของดวงจันทร์กับดาวฤกษ์พื้นหลัง'],
+['4–5 พฤศจิกายน','ฝนดาวตก Southern Taurids สูงสุดช่วงลูกไฟ','Southern Taurids มีช่วงที่มักพบลูกไฟเพิ่มขึ้นใกล้วันที่ 4–5 พฤศจิกายน 2026','ฝนดาวตกชนิดนี้มีจำนวนดาวตกไม่มาก แต่จุดเด่นคือดาวตกที่อาจสว่างมาก'],
+['9 พฤศจิกายน','ดวงจันทร์ดับ (New Moon)','ดวงจันทร์เข้าสู่ช่วง New Moon ในวันที่ 9 พฤศจิกายน 2026','ท้องฟ้าที่มืดจากแสงจันทร์ช่วยให้สังเกตดาวและวัตถุท้องฟ้าที่จางได้ดีขึ้น'],
+['11–12 พฤศจิกายน','ฝนดาวตก Northern Taurids สูงสุด','Northern Taurids มีจุดสูงสุดประมาณคืน 11–12 พฤศจิกายน 2026','เมื่อ Southern และ Northern Taurids ทำงานพร้อมกัน ช่วงปลายตุลาคมถึงต้นพฤศจิกายนอาจมีลูกไฟให้พบมากขึ้น'],
+['16 พฤศจิกายน','ดาวอังคารเข้าใกล้ดาวพฤหัสบดี','ดาวอังคารและดาวพฤหัสบดีจะเข้าใกล้กันบนท้องฟ้าในวันที่ 16 พฤศจิกายน 2026','เป็นคู่ดาวเคราะห์ที่น่าสังเกต โดยรายละเอียดการมองเห็นขึ้นอยู่กับเวลาและตำแหน่งของผู้สังเกต'],
+['16–17 พฤศจิกายน','ฝนดาวตก Leonids','ฝนดาวตก Leonids มีจุดสูงสุดประมาณคืน 16–17 พฤศจิกายน 2026 และเกี่ยวข้องกับดาวหาง 55P/Tempel-Tuttle','ปี 2026 ดวงจันทร์อยู่ในช่วงข้างขึ้นประมาณครึ่งดวง แต่ช่วงเวลาหลังดวงจันทร์ตกอาจช่วยลดแสงรบกวน'],
+['20 พฤศจิกายน','ดาวพุธห่างดวงอาทิตย์มากที่สุดทางตะวันตก','ดาวพุธถึง Greatest Elongation West ซึ่งเป็นครั้งสุดท้ายของปี 2026','เป็นโอกาสสังเกตดาวพุธในท้องฟ้าก่อนพระอาทิตย์ขึ้น หากขอบฟ้าด้านตะวันออกเปิดโล่ง'],
+['24 พฤศจิกายน','พระจันทร์เต็มดวง — Beaver Moon','พระจันทร์เต็มดวงเดือนพฤศจิกายน 2026 มีชื่อดั้งเดิมว่า Beaver Moon','เป็นช่วงที่ดวงจันทร์สว่างมาก เหมาะสำหรับสังเกตพื้นผิวดวงจันทร์ด้วยกล้องสองตาหรือกล้องโทรทรรศน์'],
+['5 ธันวาคม','ฝนดาวตก Phoenicids สูงสุด','ฝนดาวตก Phoenicids เป็นฝนดาวตกที่มีอัตราแปรผันและมีจุดสูงสุดประมาณ 5 ธันวาคม 2026','เป็นฝนดาวตกที่น่าสนใจสำหรับผู้สังเกตการณ์ในซีกโลกใต้ แต่กิจกรรมอาจเปลี่ยนแปลงมากในแต่ละปี'],
+['9 ธันวาคม','ดวงจันทร์ดับ (New Moon)','ดวงจันทร์เข้าสู่ช่วง New Moon ในวันที่ 9 ธันวาคม 2026','คืนใกล้ดวงจันทร์ดับเหมาะสำหรับดูดาวและวัตถุท้องฟ้าที่จาง เพราะแสงจันทร์รบกวนน้อย'],
+['13–14 ธันวาคม','ฝนดาวตกเจมินิดส์ (Geminids)','ฝนดาวตกเจมินิดส์มีจุดสูงสุดประมาณคืน 13–14 ธันวาคม 2026 และมักเป็นหนึ่งในฝนดาวตกที่โดดเด่นที่สุดของปี','ปี 2026 ดวงจันทร์เป็นเสี้ยวข้างขึ้นและจะรบกวนไม่มากในช่วงเวลาที่เหมาะสม'],
+['21 ธันวาคม','วันเหมายัน (December Solstice)','วันเหมายันเกิดขึ้นในวันที่ 21 ธันวาคม 2026 เมื่อดวงอาทิตย์มีตำแหน่งใต้สุดเมื่อเทียบกับเส้นศูนย์สูตรฟ้า','ซีกโลกเหนือมีช่วงกลางคืนยาวที่สุดโดยประมาณ ส่วนซีกโลกใต้มีช่วงกลางวันยาวที่สุดโดยประมาณ'],
+['21–22 ธันวาคม','ฝนดาวตก Ursids','ฝนดาวตก Ursids มีจุดสูงสุดประมาณคืน 21–22 ธันวาคม 2026','เป็นฝนดาวตกที่สังเกตได้เด่นกว่าในซีกโลกเหนือ และปีนี้มีแสงจันทร์ค่อนข้างมาก'],
+['24 ธันวาคม','พระจันทร์เต็มดวง — Cold Moon / Super Full Moon','พระจันทร์เต็มดวงเดือนธันวาคม 2026 มีชื่อว่า Cold Moon และเป็น Super Full Moon เพียงครั้งเดียวของปี 2026','ดวงจันทร์เต็มดวงจะดูสว่างและมีขนาดปรากฏใหญ่ขึ้นเล็กน้อยเมื่อเทียบกับพระจันทร์เต็มดวงบางครั้ง'],
+['3–4 มกราคม 2027','ฝนดาวตก Quadrantids','ฝนดาวตก Quadrantids มีจุดสูงสุดช่วงต้นเดือนมกราคม 2027 และมีศักยภาพให้อัตราดาวตกสูง','ช่วงสูงสุดค่อนข้างสั้น จึงต้องเลือกเวลาให้เหมาะสมในการสังเกต']
+];
+const upcomingEvents=[
+ {date:'2026-10-08T18:00:00+07:00',title:'ฝนดาวตก Draconids',when:'คืน 8–9 ตุลาคม 2026'},
+ {date:'2026-10-10T00:00:00+07:00',title:'ดวงจันทร์ดับ (New Moon)',when:'10 ตุลาคม 2026'},
+ {date:'2026-10-12T18:00:00+07:00',title:'ดาวพุธห่างดวงอาทิตย์มากที่สุดทางตะวันออก',when:'12 ตุลาคม 2026'},
+ {date:'2026-10-14T23:00:00+07:00',title:'ฝนดาวตก Southern Taurids',when:'14 ตุลาคม 2026'},
+ {date:'2026-10-21T23:00:00+07:00',title:'ฝนดาวตก Orionids',when:'คืน 21–22 ตุลาคม 2026'},
+ {date:'2026-10-26T03:11:00+07:00',title:'พระจันทร์เต็มดวง Hunter’s Moon',when:'26 ตุลาคม 2026'},
+ {date:'2026-11-05T23:00:00+07:00',title:'Southern Taurids ช่วงลูกไฟ',when:'คืน 4–5 พฤศจิกายน 2026'},
+ {date:'2026-11-09T14:02:00+07:00',title:'ดวงจันทร์ดับ (New Moon)',when:'9 พฤศจิกายน 2026'},
+ {date:'2026-11-11T23:00:00+07:00',title:'ฝนดาวตก Northern Taurids',when:'คืน 11–12 พฤศจิกายน 2026'},
+ {date:'2026-11-16T18:00:00+07:00',title:'ดาวอังคารเข้าใกล้ดาวพฤหัสบดี',when:'16 พฤศจิกายน 2026'},
+ {date:'2026-11-16T23:00:00+07:00',title:'ฝนดาวตก Leonids',when:'คืน 16–17 พฤศจิกายน 2026'},
+ {date:'2026-11-20T05:00:00+07:00',title:'ดาวพุธห่างดวงอาทิตย์มากที่สุดทางตะวันตก',when:'20 พฤศจิกายน 2026'},
+ {date:'2026-11-24T21:53:00+07:00',title:'พระจันทร์เต็มดวง Beaver Moon',when:'24 พฤศจิกายน 2026'},
+ {date:'2026-12-05T23:00:00+07:00',title:'ฝนดาวตก Phoenicids',when:'5 ธันวาคม 2026'},
+ {date:'2026-12-09T07:51:00+07:00',title:'ดวงจันทร์ดับ (New Moon)',when:'9 ธันวาคม 2026'},
+ {date:'2026-12-13T23:00:00+07:00',title:'ฝนดาวตก Geminids',when:'คืน 13–14 ธันวาคม 2026'},
+ {date:'2026-12-21T23:00:00+07:00',title:'วันเหมายัน',when:'21 ธันวาคม 2026'},
+ {date:'2026-12-21T23:00:00+07:00',title:'ฝนดาวตก Ursids',when:'คืน 21–22 ธันวาคม 2026'},
+ {date:'2026-12-24T23:00:00+07:00',title:'Super Full Moon — Cold Moon',when:'24 ธันวาคม 2026'},
+ {date:'2027-01-03T23:00:00+07:00',title:'ฝนดาวตก Quadrantids',when:'คืน 3–4 มกราคม 2027'}
+];
+const knowledgeData=[
+{name:'โลกของเรา',icon:'fa-earth-americas',accent:'text-blue-300',intro:'เรื่องน่ารู้เกี่ยวกับดาวเคราะห์บ้านของเรา ตั้งแต่โครงสร้างภายใน บรรยากาศ ไปจนถึงการเคลื่อนที่ของโลก',facts:[['โลกไม่ได้เป็นทรงกลมสมบูรณ์','การหมุนทำให้โลกป่องเล็กน้อยบริเวณเส้นศูนย์สูตรและแบนลงบริเวณขั้วโลก'],['โลกมีหลายชั้น','โครงสร้างหลักแบ่งเป็นเปลือกโลก เนื้อโลก แก่นโลกชั้นนอก และแก่นโลกชั้นใน แต่ละชั้นมีองค์ประกอบและสมบัติต่างกัน'],['สนามแม่เหล็กช่วยปกป้องโลก','การเคลื่อนที่ของโลหะหลอมเหลวในแก่นโลกชั้นนอกมีส่วนสร้างสนามแม่เหล็ก ซึ่งช่วยเบี่ยงเบนอนุภาคมีประจุจากดวงอาทิตย์'],['ฤดูกาลไม่ได้เกิดจากโลกใกล้หรือไกลดวงอาทิตย์','สาเหตุหลักคือแกนโลกเอียงประมาณ 23.5 องศา ทำให้แต่ละซีกโลกได้รับแสงต่างกันระหว่างการโคจรรอบดวงอาทิตย์'],['หนึ่งวันไม่เท่ากับ 24 ชั่วโมงพอดีในทุกความหมาย','โลกหมุนรอบตัวเองเมื่อเทียบกับดาวฤกษ์ประมาณ 23 ชั่วโมง 56 นาที ส่วนวันสุริยะเฉลี่ยที่เราใช้ในชีวิตประจำวันคือประมาณ 24 ชั่วโมง']]},
+{name:'ระบบสุริยะ',icon:'fa-sun',accent:'text-orange-300',intro:'ความรู้เพิ่มเติมจากแบบจำลอง ตั้งแต่แรงโน้มถ่วง ดาวเคราะห์ ไปจนถึงวัตถุขนาดเล็กในระบบสุริยะ',facts:[['ทำไมดาวเคราะห์ไม่ตกใส่ดวงอาทิตย์','ดาวเคราะห์ถูกแรงโน้มถ่วงดึงเข้าหาดวงอาทิตย์ ขณะเดียวกันก็มีความเร็วไปด้านข้าง จึงเกิดเป็นวงโคจรแทนที่จะตกตรงเข้าไป'],['ดาวเคราะห์แบ่งได้เป็นหลายกลุ่ม','ดาวพุธ ศุกร์ โลก และอังคารเป็นดาวเคราะห์หิน ส่วนพฤหัสบดีและเสาร์เป็นดาวแก๊สยักษ์ ขณะที่ยูเรนัสและเนปจูนจัดเป็นดาวยักษ์น้ำแข็ง'],['ดาวศุกร์ร้อนกว่าดาวพุธ','แม้ดาวพุธอยู่ใกล้ดวงอาทิตย์กว่า แต่บรรยากาศคาร์บอนไดออกไซด์หนาแน่นของดาวศุกร์กักเก็บความร้อนด้วยภาวะเรือนกระจกอย่างรุนแรง'],['วงแหวนไม่ได้มีเฉพาะดาวเสาร์','ดาวเคราะห์ยักษ์ทั้งสี่ดวงมีระบบวงแหวน แต่ของดาวเสาร์สว่างและกว้างจนสังเกตได้เด่นที่สุด'],['ระบบสุริยะไม่ได้หยุดนิ่ง','ดวงอาทิตย์และสมาชิกทั้งหมดของระบบสุริยะเดินทางรอบศูนย์กลางกาแล็กซีทางช้างเผือกไปพร้อมกัน']]},
+{name:'ดวงจันทร์',icon:'fa-moon',accent:'text-slate-200',intro:'เพื่อนบ้านที่ใกล้โลกที่สุด พร้อมเรื่องข้างขึ้นข้างแรม คราส และความสัมพันธ์ระหว่างโลกกับดวงจันทร์',facts:[['เราเห็นดวงจันทร์ด้านเดิมเป็นส่วนใหญ่','ดวงจันทร์ใช้เวลาหมุนรอบตัวเองใกล้เคียงกับเวลาที่ใช้โคจรรอบโลก จึงหันด้านเดิมเข้าหาโลกเกือบตลอดเวลา'],['ข้างขึ้นข้างแรมเกิดจากมุมมอง','ดวงจันทร์ไม่ได้เปลี่ยนรูปร่าง แต่เราเห็นส่วนที่ได้รับแสงอาทิตย์ในสัดส่วนต่างกันตามตำแหน่งของดวงจันทร์รอบโลก'],['ดวงจันทร์มีผลต่อน้ำขึ้นน้ำลง','แรงโน้มถ่วงของดวงจันทร์เป็นปัจจัยสำคัญที่ทำให้ระดับน้ำทะเลบนโลกเปลี่ยนแปลงเป็นคาบ'],['รอยเท้าบนดวงจันทร์อยู่ได้นาน','ดวงจันทร์แทบไม่มีลมและฝนแบบโลก จึงไม่มีกระบวนการกัดเซาะแบบเดียวกับโลกมาลบรอยอย่างรวดเร็ว']]},
+{name:'ดาวฤกษ์',icon:'fa-star',accent:'text-yellow-200',intro:'ทำความรู้จักกำเนิด สี อุณหภูมิ และช่วงชีวิตของดาวฤกษ์ที่ส่องสว่างทั่วจักรวาล',facts:[['สีของดาวบอกอุณหภูมิได้','โดยทั่วไปดาวสีน้ำเงินมีอุณหภูมิพื้นผิวสูงกว่าดาวสีขาว เหลือง ส้ม และแดง'],['ดาวฤกษ์สร้างพลังงานด้วยนิวเคลียร์ฟิวชัน','ในแกนกลางของดาวอย่างดวงอาทิตย์ ไฮโดรเจนรวมตัวเป็นฮีเลียมและปล่อยพลังงานออกมา'],['ดาวไม่ได้มีอายุเท่ากัน','มวลของดาวมีผลอย่างมากต่ออายุ ดาวมวลสูงใช้เชื้อเพลิงเร็วและมีอายุสั้นกว่าดาวมวลต่ำ'],['จุดจบของดาวขึ้นกับมวล','ดาวคล้ายดวงอาทิตย์อาจเหลือเป็นดาวแคระขาว ส่วนดาวมวลสูงสามารถระเบิดเป็นซูเปอร์โนวาและเหลือดาวนิวตรอนหรือหลุมดำ']]},
+{name:'หลุมดำ',icon:'fa-circle',accent:'text-purple-300',intro:'วัตถุที่แรงโน้มถ่วงรุนแรงมาก พร้อมทำความเข้าใจ Event Horizon และวิธีที่นักดาราศาสตร์ตรวจพบมัน',facts:[['หลุมดำไม่ได้ดูดทุกอย่างในจักรวาล','วัตถุที่อยู่ห่างพอสามารถโคจรรอบหลุมดำได้ เช่นเดียวกับการโคจรรอบวัตถุที่มีมวลอื่น'],['Event Horizon คือขอบเขตสำคัญ','เป็นบริเวณที่เมื่อผ่านเข้าไปแล้ว แม้แต่แสงก็ไม่สามารถเดินทางกลับออกมาได้'],['เรามองหลุมดำโดยตรงไม่ได้','นักดาราศาสตร์ศึกษาผลของแรงโน้มถ่วงต่อดาวและแก๊สรอบ ๆ รวมถึงรังสีจากสสารร้อนก่อนตกเข้าสู่หลุมดำ'],['ใจกลางกาแล็กซีจำนวนมากมีหลุมดำมวลยิ่งยวด','รวมถึง Sagittarius A* ที่บริเวณใจกลางทางช้างเผือก']]},
+{name:'กาแล็กซีและเอกภพ',icon:'fa-star',accent:'text-indigo-300',intro:'จากทางช้างเผือกไปจนถึงโครงสร้างขนาดมหึมาและการขยายตัวของเอกภพ',facts:[['ทางช้างเผือกเป็นกาแล็กซีของเรา','ระบบสุริยะอยู่ในกาแล็กซีทางช้างเผือก ไม่ได้อยู่ใกล้ใจกลางกาแล็กซี'],['กาแล็กซีมีหลายรูปร่าง','พบทั้งแบบกังหัน แบบรี และแบบไม่ปกติ โดยรูปร่างสัมพันธ์กับประวัติและวิวัฒนาการของกาแล็กซี'],['เมื่อมองไกล เรากำลังมองย้อนเวลา','แสงต้องใช้เวลาเดินทาง วัตถุที่อยู่ห่างหลายล้านปีแสงจึงปรากฏให้เราเห็นในสภาพเมื่อหลายล้านปีก่อน'],['เอกภพกำลังขยายตัว','ในสเกลใหญ่ ระยะห่างระหว่างกาแล็กซีจำนวนมากเพิ่มขึ้นตามเวลา ซึ่งเป็นหลักฐานสำคัญของจักรวาลวิทยาสมัยใหม่']]},
+{name:'เทคโนโลยีอวกาศ',icon:'fa-rocket',accent:'text-cyan-300',intro:'เบื้องหลังจรวด ดาวเทียม สถานีอวกาศ และเครื่องมือที่ทำให้มนุษย์สำรวจไกลกว่าโลก',facts:[['จรวดเคลื่อนที่ด้วยแรงปฏิกิริยา','แก๊สร้อนถูกพ่นออกด้วยความเร็วสูงในทิศหนึ่ง ทำให้จรวดได้รับแรงผลักไปอีกทิศตามกฎการเคลื่อนที่'],['ดาวเทียมไม่ได้ลอยนิ่งเพราะไม่มีแรงโน้มถ่วง','จริง ๆ แล้วดาวเทียมกำลังตกเข้าหาโลกอย่างต่อเนื่อง แต่มีความเร็วด้านข้างมากพอที่จะตกวนรอบโลกเป็นวงโคจร'],['กล้องโทรทรรศน์อวกาศหลีกเลี่ยงบรรยากาศโลกได้','การนำกล้องขึ้นสู่อวกาศช่วยลดผลจากความปั่นป่วนและการดูดกลืนแสงบางช่วงคลื่นของบรรยากาศ'],['ยานสำรวจหุ่นยนต์ไปได้ในที่ที่มนุษย์ยังไปไม่ถึง','ยานสามารถทำงานเป็นเวลานานและสำรวจสภาพแวดล้อมที่ไกลหรือรุนแรงมากโดยไม่เสี่ยงชีวิตนักบินอวกาศ']]},
+{name:'ชีวิตนอกโลก',icon:'fa-dna',accent:'text-green-300',intro:'สำรวจคำถามว่าชีวิตอาจมีอยู่ที่ไหน และนักวิทยาศาสตร์ค้นหาร่องรอยของมันอย่างไร',facts:[['เรายังไม่มีหลักฐานยืนยันชีวิตนอกโลก','จนถึงปัจจุบันยังไม่มีการค้นพบสิ่งมีชีวิตนอกโลกที่ได้รับการยืนยันทางวิทยาศาสตร์'],['เขตเอื้ออาศัยได้เป็นเพียงจุดเริ่มต้น','บริเวณนี้คือระยะที่อาจเอื้อต่อน้ำของเหลวบนพื้นผิวดาวเคราะห์ แต่การมีชีวิตยังขึ้นกับปัจจัยอื่นอีกมาก'],['มหาสมุทรอาจซ่อนอยู่ใต้พื้นน้ำแข็ง','ดวงจันทร์อย่าง Europa และ Enceladus เป็นเป้าหมายสำคัญ เพราะมีหลักฐานบ่งชี้ถึงน้ำของเหลวใต้พื้นผิว'],['ดาวเคราะห์นอกระบบมีจำนวนมาก','การค้นพบดาวเคราะห์รอบดาวฤกษ์อื่นช่วยให้นักดาราศาสตร์เปรียบเทียบสภาพแวดล้อมที่แตกต่างจากระบบสุริยะของเรา']]},
+{name:'วัตถุท้องฟ้า',icon:'fa-meteor',accent:'text-pink-300',intro:'ดาวหาง ดาวเคราะห์น้อย อุกกาบาต เนบิวลา และวัตถุอื่นที่ทำให้ท้องฟ้ามีเรื่องให้ค้นหาไม่รู้จบ',facts:[['ดาวหางมีหางเมื่อเข้าใกล้ดวงอาทิตย์','ความร้อนทำให้น้ำแข็งและสารระเหิดกลายเป็นแก๊ส เกิดโคมาและหางที่ได้รับอิทธิพลจากลมสุริยะและแสงอาทิตย์'],['ดาวตกไม่ใช่ดาวฤกษ์ตกลงมา','แสงวาบเกิดจากเศษวัตถุขนาดเล็กเข้าสู่บรรยากาศโลกด้วยความเร็วสูง'],['อุกกาบาตคือส่วนที่มาถึงพื้น','ถ้าเศษวัตถุผ่านบรรยากาศและเหลือชิ้นส่วนตกถึงพื้นโลก เราเรียกชิ้นส่วนนั้นว่าอุกกาบาต'],['เนบิวลามีหลายชนิด','บางแห่งเป็นแหล่งก่อกำเนิดดาว ขณะที่บางแห่งเกิดจากสสารที่ดาวปล่อยออกมาในช่วงปลายชีวิต']]},
+{name:'อวกาศชวนทึ่ง',icon:'fa-wand-magic-sparkles',accent:'text-fuchsia-300',intro:'รวมคำถามสั้น ๆ ที่ฟังดูแปลก แต่มีคำอธิบายทางวิทยาศาสตร์ซ่อนอยู่',facts:[['แสงจากดวงอาทิตย์ไม่ได้มาถึงโลกทันที','แสงใช้เวลาประมาณ 8 นาที 20 วินาทีเดินทางจากดวงอาทิตย์ถึงโลก ดังนั้นเราจึงเห็นดวงอาทิตย์ในอดีตเล็กน้อยเสมอ'],['อวกาศเงียบมากเพราะอะไร','เสียงต้องอาศัยตัวกลาง เช่น อากาศหรือน้ำ ในสุญญากาศจึงไม่มีตัวกลางมากพอให้คลื่นเสียงเดินทางเหมือนบนโลก'],['ท้องฟ้ากลางคืนทำไมมืดทั้งที่มีดาวจำนวนมาก','เอกภพมีอายุจำกัดและกำลังขยายตัว แสงจากทุกบริเวณจึงไม่ได้เดินทางมาถึงเราในลักษณะที่ทำให้ท้องฟ้าสว่างทั่วทั้งผืน'],['บนดาวเคราะห์อื่นคำว่า “ปี” ไม่เท่ากัน','หนึ่งปีหมายถึงเวลาที่ดาวเคราะห์ใช้โคจรรอบดาวฤกษ์ ดังนั้นดาวแต่ละดวงจึงมีความยาวของปีต่างกัน']]}
+];
+const zodiac=[
+{name:"ราศีเมษ",constellation:"กลุ่มดาวแกะ (Aries)",icon:"♈",dates:"21 มี.ค. – 19 เม.ย.",character:"กลุ่มดาวขนาดเล็กในเขตจักรราศี รูปร่างไม่เด่นมากเมื่อเทียบกับกลุ่มดาวใกล้เคียง",story:"ตำนานแกะขนทองคำเชื่อมโยงกับการเดินทางของเจสันและเหล่าอาร์โกนอต",observe:"เหมาะสังเกตช่วงปลายฤดูใบไม้ร่วงถึงฤดูหนาว มองหา Hamal ทางบริเวณท้องฟ้าด้านตะวันออก",stars:"ฮามาล (Hamal) และเชราตัน (Sheratan)",nearby:"อยู่ใกล้ Pisces และ Taurus และเป็นบริเวณที่เส้นสุริยวิถีพาดผ่าน"},
+{name:"ราศีพฤษภ",constellation:"กลุ่มดาววัว (Taurus)",icon:"♉",dates:"20 เม.ย. – 20 พ.ค.",character:"เป็นกลุ่มดาวเด่นมากในฤดูหนาว มีรูปร่างคล้ายตัว V และส่วนหัวของวัว",story:"ตำนานกรีกเชื่อมโยงกับซูสที่แปลงกายเป็นวัวสีขาวเพื่อพายูโรปาไปยังเกาะครีต",observe:"ดูเด่นในฤดูหนาว มองหา Aldebaran สีส้มและกระจุกดาวลูกไก่",stars:"อัลเดบารัน (Aldebaran), ดาวลูกไก่ (Pleiades), ไฮยาดีส (Hyades)",nearby:"อยู่ใกล้ Gemini, Aries และ Orion ทำให้ใช้ Orion เป็นจุดช่วยหาได้"},
+{name:"ราศีเมถุน",constellation:"กลุ่มดาวคนคู่ (Gemini)",icon:"♊",dates:"21 พ.ค. – 20 มิ.ย.",character:"มีดาวสว่างสองดวงอยู่ใกล้กัน เป็นลักษณะที่ช่วยให้จดจำกลุ่มดาวได้ง่าย",story:"เชื่อมโยงกับฝาแฝด Castor และ Pollux ในตำนานกรีก",observe:"เด่นช่วงฤดูหนาวถึงต้นฤดูใบไม้ผลิ มองหาดาวสว่างสองดวงทางด้านตะวันออกของ Orion",stars:"คาสเตอร์ (Castor) และพอลลักซ์ (Pollux)",nearby:"อยู่ใกล้ Taurus, Auriga และ Cancer"},
+{name:"ราศีกรกฎ",constellation:"กลุ่มดาวปู (Cancer)",icon:"♋",dates:"21 มิ.ย. – 22 ก.ค.",character:"เป็นกลุ่มดาวค่อนข้างจาง แม้พื้นที่กว้างแต่ดาวหลักไม่สว่างมาก",story:"ตำนานเชื่อมโยงกับปูที่เข้าช่วย Hydra ต่อสู้กับ Hercules",observe:"ควรใช้ท้องฟ้ามืดและกล้องสองตาเพื่อช่วยมอง M44 โดยเฉพาะช่วงปลายฤดูหนาว",stars:"กระจุกดาวรังผึ้ง (Beehive Cluster / M44)",nearby:"อยู่ระหว่าง Gemini กับ Leo และอยู่ใกล้แนวสุริยวิถี"},
+{name:"ราศีสิงห์",constellation:"กลุ่มดาวสิงโต (Leo)",icon:"♌",dates:"23 ก.ค. – 22 ส.ค.",character:"มีส่วนหัวคล้ายเคียวและลำตัวต่อออกไปทางตะวันออก ทำให้จินตนาการเป็นสิงโตได้ง่าย",story:"เชื่อมโยงกับสิงโตเนเมียในภารกิจ 12 ประการของ Hercules",observe:"เด่นในฤดูใบไม้ผลิ มองหา Regulus ซึ่งเป็นดาวสว่างใกล้แนวสุริยวิถี",stars:"เรกูลัส (Regulus)",nearby:"อยู่ระหว่าง Cancer กับ Virgo และมีดาวสว่างช่วยนำทาง"},
+{name:"ราศีกันย์",constellation:"กลุ่มดาวหญิงสาว (Virgo)",icon:"♍",dates:"23 ส.ค. – 22 ก.ย.",character:"เป็นกลุ่มดาวขนาดใหญ่มากและเป็นบริเวณสำคัญของท้องฟ้าที่มีกาแล็กซีจำนวนมาก",story:"มักเชื่อมโยงกับเทพีแห่งความยุติธรรมและรวงข้าวในตำนานกรีก",observe:"ใช้แนวโค้งจากด้ามจับ Big Dipper ไปยัง Arcturus แล้วต่อไปหา Spica ได้",stars:"สไปกา (Spica)",nearby:"อยู่ใกล้ Leo และ Libra และมี Virgo Cluster ในบริเวณเดียวกัน"},
+{name:"ราศีตุล",constellation:"กลุ่มดาวตาชั่ง (Libra)",icon:"♎",dates:"23 ก.ย. – 22 ต.ค.",character:"เป็นกลุ่มดาวที่สื่อถึงคันชั่งและเป็นหนึ่งในกลุ่มดาวจักรราศีที่แทนสิ่งของ",story:"เกี่ยวข้องกับคันชั่งแห่งความยุติธรรมและมีความเชื่อมโยงทางประวัติศาสตร์กับบริเวณ Scorpius",observe:"มองเห็นเด่นช่วงฤดูร้อนถึงต้นฤดูใบไม้ร่วง",stars:"Zubenelgenubi และ Zubeneschamali",nearby:"อยู่ระหว่าง Virgo กับ Scorpius และอยู่ใกล้แนวสุริยวิถี"},
+{name:"ราศีพิจิก",constellation:"กลุ่มดาวแมงป่อง (Scorpius)",icon:"♏",dates:"23 ต.ค. – 21 พ.ย.",character:"มีรูปร่างคล้ายแมงป่องชัดเจนที่สุดกลุ่มหนึ่ง ส่วนหางโค้งและดาว Antares สีแดงส้มโดดเด่น",story:"ตำนานเชื่อมโยงกับแมงป่องที่ต่อสู้กับนายพราน Orion จึงมีเรื่องเล่าว่าทั้งคู่ไม่ปรากฏเด่นพร้อมกัน",observe:"เด่นมากในฤดูร้อนทางทิศใต้ มองหา Antares และส่วนหางที่โค้ง",stars:"แอนทาเรส (Antares)",nearby:"อยู่ใกล้ Sagittarius และบริเวณทางช้างเผือกที่หนาแน่น"},
+{name:"ราศีธนู",constellation:"กลุ่มดาวคนยิงธนู (Sagittarius)",icon:"♐",dates:"22 พ.ย. – 21 ธ.ค.",character:"มีดาวและวัตถุท้องฟ้าจำนวนมาก เนื่องจากมองไปทางใจกลางกาแล็กซีของเรา",story:"มักเชื่อมโยงกับ Chiron เซนทอร์ผู้เป็นครูในตำนานกรีก",observe:"ดีที่สุดช่วงฤดูร้อนทางทิศใต้ มองหาโครงรูป Teapot",stars:"บริเวณดาวที่เรียกว่า Teapot และบริเวณใจกลางทางช้างเผือก",nearby:"อยู่ใกล้ Scorpius และเป็นบริเวณที่มีเนบิวลาและกระจุกดาวจำนวนมาก"},
+{name:"ราศีมกร",constellation:"กลุ่มดาวแพะทะเล (Capricornus)",icon:"♑",dates:"22 ธ.ค. – 19 ม.ค.",character:"เป็นกลุ่มดาวค่อนข้างจาง รูปร่างโดยรวมมักจินตนาการเป็นแพะทะเลหรือรูปสามเหลี่ยม",story:"เชื่อมโยงกับเทพ Pan และเรื่องการหลบหนีของเทพจาก Typhon",observe:"ดูได้ช่วงปลายฤดูร้อนถึงต้นฤดูใบไม้ร่วงทางทิศใต้",stars:"ดาว Deneb Algedi",nearby:"อยู่ใกล้ Sagittarius และ Aquarius"},
+{name:"ราศีกุมภ์",constellation:"กลุ่มดาวคนแบกหม้อน้ำ (Aquarius)",icon:"♒",dates:"20 ม.ค. – 18 ก.พ.",character:"เป็นกลุ่มดาวขนาดใหญ่แต่มีดาวสว่างไม่มาก จึงต้องใช้ท้องฟ้ามืด",story:"ตำนานกรีกมักเชื่อมโยงกับ Ganymede ผู้ถวายเครื่องดื่มแก่เหล่าเทพ",observe:"เหมาะสังเกตช่วงปลายฤดูร้อนถึงฤดูใบไม้ร่วงทางทิศใต้",stars:"Sadalmelik และ Sadalsuud",nearby:"อยู่ใกล Capricornus, Pisces และ Pegasus"},
+{name:"ราศีมีน",constellation:"กลุ่มดาวปลาคู่ (Pisces)",icon:"♓",dates:"19 ก.พ. – 20 มี.ค.",character:"เป็นปลาสองตัวที่มีเส้นเชื่อมกัน รูปร่างค่อนข้างจางและต้องอาศัยท้องฟ้ามืด",story:"ตามตำนาน อะโฟรไดทีและอีรอสแปลงร่างเป็นปลาเพื่อหนีไทฟอน และผูกตัวไว้ด้วยเชือกเพื่อไม่ให้พลัดกัน",observe:"เหมาะสังเกตช่วงฤดูใบไม้ร่วง อยู่ใกล้กลุ่มดาวม้าบินเพกาซัสและกลุ่มดาวคนแบกหม้อน้ำ",stars:"ดาว Alrescha เป็นดาวสำคัญบริเวณที่เส้นของปลาสองตัวเชื่อมกัน",nearby:"อยู่ใกล้ Aquarius, Aries และ Pegasus และมีแนวสุริยวิถีพาดผ่าน"}
+];
+
+function card(v,i,t,d){return `<div onclick="show('${v}')" class="glass-card rounded-2xl p-6 cursor-pointer min-h-[210px]"><div class="text-4xl mb-4">${i}</div><h3 class="text-xl font-bold mb-2">${t}</h3><p class="text-gray-400 text-sm">${d}</p><div class="text-purple-400 mt-5">เข้าชมเนื้อหา →</div></div>`}
+function toggleMenu(){const menu=document.getElementById('menu'),btn=document.getElementById('menuToggle');const open=!menu.classList.contains('menu-open');menu.classList.toggle('menu-open',open);btn.classList.toggle('active',open);btn.setAttribute('aria-expanded',open?'true':'false');btn.setAttribute('aria-label',open?'ปิดเมนู':'เปิดเมนู')}
+function closeMenu(){const menu=document.getElementById('menu'),btn=document.getElementById('menuToggle');menu.classList.remove('menu-open');btn.classList.remove('active');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-label','เปิดเมนู')}
+document.addEventListener('pointerdown',e=>{const nav=document.querySelector('.liquid-nav');const menu=document.getElementById('menu');if(menu&&menu.classList.contains('menu-open')&&nav&&!nav.contains(e.target))closeMenu()});
+let activeView='home';
+function setupCardSelection(){document.querySelectorAll('.view').forEach(view=>{view.addEventListener('click',e=>{const card=e.target.closest('.selectable-card');if(!card||!view.contains(card))return;const isAllowed=card.closest('#history')||card.closest('#calendar');if(!isAllowed)return;const group=card.parentElement;const wasSelected=card.classList.contains('is-selected');if(wasSelected){card.classList.remove('is-selected');group.querySelectorAll('.selectable-card').forEach(c=>c.classList.remove('is-dimmed'));return}group.querySelectorAll('.selectable-card').forEach(c=>c.classList.remove('is-selected','is-dimmed'));card.classList.add('is-selected');group.querySelectorAll('.selectable-card').forEach(c=>{if(c!==card)c.classList.add('is-dimmed')})})})}
+setupCardSelection();
+let countdownTimer=null;
+function startCountdown(){
+  if(countdownTimer) clearInterval(countdownTimer);
+  const title=document.querySelector('#calendar .countdown-card h3');
+  const desc=document.querySelector('#calendar .countdown-card p:not(#countdownStatus)');
+  const status=document.getElementById('countdownStatus');
+  const tick=()=>{
+    const now=Date.now();
+    const next=upcomingEvents.find(e=>new Date(e.date).getTime()>now);
+    if(!next){
+      title.textContent='🌌 ไม่มีเหตุการณ์ที่บันทึกไว้ในช่วงนี้';
+      desc.textContent='เพิ่มเหตุการณ์ใหม่เพื่อให้ Countdown แสดงรายการถัดไป';
+      status.textContent='';
+      return;
+    }
+    const target=new Date(next.date).getTime();
+    const diff=Math.max(0,target-now);
+    const totalSec=Math.floor(diff/1000);
+    const d=Math.floor(totalSec/86400),h=Math.floor((totalSec%86400)/3600),m=Math.floor((totalSec%3600)/60),sec=totalSec%60;
+    title.textContent='☄️ '+next.title;
+    desc.textContent='กำหนดการ: '+next.when;
+    document.getElementById('cdDays').textContent=String(d).padStart(2,'0');
+    document.getElementById('cdHours').textContent=String(h).padStart(2,'0');
+    document.getElementById('cdMinutes').textContent=String(m).padStart(2,'0');
+    document.getElementById('cdSeconds').textContent=String(sec).padStart(2,'0');
+    status.textContent='นับถอยหลังสู่เหตุการณ์ถัดไป — เวลาไทย (UTC+7)';
+  };
+  tick(); countdownTimer=setInterval(tick,1000);
+}
+startCountdown();
+function show(v){
+  if(v===activeView){closeMenu();return}
+  const current=document.getElementById(activeView), next=document.getElementById(v);
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('view-enter'));
+  if(current && !current.classList.contains('hidden')){
+    current.classList.add('view-exit');
+    setTimeout(()=>{current.classList.add('hidden');current.classList.remove('view-exit')},330);
+  }
+  closeMenu();
+  next.classList.remove('hidden');
+  void next.offsetWidth;
+  next.classList.add('view-enter');
+  activeView=v;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(v==='solar'){startSolar()}else{running=false;if(aid)cancelAnimationFrame(aid)}
+}
+knowledgeGrid.innerHTML=knowledgeData.map((k,i)=>`<article onclick="openKnowledge(${i})" class="glass-card selectable-card rounded-2xl p-6 cursor-pointer group min-h-[230px] flex flex-col justify-between"><div><div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-5"><i class="fa-solid ${k.icon} ${k.accent} text-xl"></i></div><h3 class="text-xl font-bold">${k.name}</h3><p class="text-gray-400 text-sm mt-3 leading-relaxed">${k.intro}</p></div><div class="mt-6 text-purple-300 text-sm font-semibold">เปิดอ่านเกร็ดความรู้ →</div></article>`).join('');
+function openKnowledge(i){const k=knowledgeData[i];openModal('',k.name,'เกร็ดความรู้',`<p class="text-gray-300 mb-5">${k.intro}</p><div class="space-y-3">${k.facts.map((f,n)=>`<div class="bg-gray-900/55 border border-white/10 rounded-xl p-4"><div class="flex gap-3"><span class="shrink-0 w-7 h-7 rounded-full bg-purple-500/15 text-purple-300 flex items-center justify-center text-xs font-bold">${n+1}</span><div><h4 class="font-semibold text-white">${f[0]}</h4><p class="text-gray-400 text-sm mt-1 leading-relaxed">${f[1]}</p></div></div></div>`).join('')}</div>`) }
+historyList.innerHTML=historyData.map(x=>`<article class="glass-card selectable-card rounded-2xl p-6"><span class="text-purple-300 font-semibold">${x[0]}</span><h3 class="text-xl font-bold mt-1">${x[1]}</h3><p class="text-gray-300 mt-3 leading-relaxed">${x[2]}</p><div class="mt-4 pt-4 border-t border-gray-800 text-gray-400 text-sm leading-relaxed"><b class="text-purple-300">ความสำคัญ:</b> ${x[3]}</div></article>`).join('');calendarGrid.innerHTML=calendarData.map((x,i)=>`<article class="glass-card selectable-card rounded-2xl p-6"><b class="text-pink-400">${x[0]}</b><h3 class="text-xl font-bold mt-2">${x[1]}</h3><p class="text-gray-300 mt-3 leading-relaxed">${x[2]}</p><div class="mt-4 pt-4 border-t border-gray-800 text-gray-400 text-sm leading-relaxed"><b class="text-pink-300">รายละเอียด:</b> ${x[3]}</div><button type="button" onclick="event.stopPropagation();calendarModal(${i})" class="mt-5 w-full rounded-xl px-4 py-3 bg-white/8 border border-white/10 text-pink-200 hover:bg-white/12 transition font-semibold">ดูรายละเอียด →</button></article>`).join('');zodiacGrid.innerHTML=zodiac.map((z,i)=>`<article onclick="zModal(${i})" class="glass-card selectable-card rounded-2xl p-6 cursor-pointer group min-h-[220px] flex flex-col justify-between hover:border-amber-500/50 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+  <div class="absolute -right-5 -bottom-8 text-[120px] opacity-[0.08] group-hover:opacity-[0.13] group-hover:scale-110 transition-all duration-500">${z.icon}</div>
+  <div class="relative z-10">
+    <div class="flex items-start justify-between gap-3">
+      <div class="w-14 h-14 rounded-full bg-amber-500/15 border border-amber-400/20 flex items-center justify-center text-4xl group-hover:scale-110 transition">${z.icon}</div>
+      <span class="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold">เปิดดู</span>
+    </div>
+    <h3 class="font-bold text-2xl mt-6 text-white group-hover:text-amber-300 transition">${z.name}</h3>
+    <p class="text-amber-400 text-sm font-medium mt-1">${z.constellation}</p>
+    <p class="text-gray-400 text-sm mt-4"><i class="fa-regular fa-calendar mr-2"></i>${z.dates}</p>
+  </div>
+  <div class="relative z-10 mt-6 flex items-center text-amber-300 text-sm font-semibold">เปิดการ์ดอ่านข้อมูล <span class="ml-2 group-hover:translate-x-1 transition">→</span></div>
+</article>`).join('');for(let i=1;i<=31;i++)day.innerHTML+=`<option>${i}</option>`;
+function zModal(i){let z=zodiac[i];openModal(z.icon,z.constellation,z.name+' | '+z.dates,`<div class="space-y-5">
+<div><h4 class="text-amber-400 font-bold mb-1">⭐ ลักษณะของกลุ่มดาว</h4><p>${z.character}</p></div>
+<div><h4 class="text-purple-400 font-bold mb-1">📖 ประวัติและความเป็นมา</h4><p>${z.story}</p></div>
+<div><h4 class="text-cyan-400 font-bold mb-1">👁️ จุดสังเกตบนท้องฟ้า</h4><p>${z.observe}</p></div>
+<div><h4 class="text-pink-400 font-bold mb-1">✨ ดาวเด่นและวัตถุที่น่าสนใจ</h4><p>${z.stars}</p></div>
+<div><h4 class="text-green-400 font-bold mb-1">🧭 กลุ่มดาวใกล้เคียง</h4><p>${z.nearby}</p></div>
+<div class="bg-gray-900/60 rounded-xl p-4 border border-gray-800 text-sm text-gray-400"><b class="text-white">หมายเหตุ:</b> ช่วงวันที่ของราศีเป็นช่วงตามระบบโหราศาสตร์ตะวันตก ส่วนกลุ่มดาวเป็นขอบเขตทางดาราศาสตร์ที่ใช้ระบุตำแหน่งบนท้องฟ้า</div>
+</div>`)}
+const calendarDetails=[
+{icon:'☄️',worth:'น่ารอมาก',direction:'ทิศตะวันตกเฉียงเหนือในช่วงหัวค่ำ',time:'หลังพระอาทิตย์ตก',tip:'เป็นฝนดาวตกที่เด่นเรื่องการดูช่วงหัวค่ำ และปีนี้แสงจันทร์รบกวนน้อยมาก'},
+{icon:'🌙',worth:'น่าดู',direction:'บริเวณท้องฟ้าด้านที่ดาวพฤหัสบดีปรากฏก่อนรุ่งเช้า',time:'ก่อนรุ่งเช้า',tip:'ประเทศไทยจะเห็นเป็นการเข้าใกล้ของดวงจันทร์กับดาวพฤหัสบดี ไม่ใช่การบังแบบเดียวกันทุกพื้นที่'},
+{icon:'✨',worth:'น่าดูถ้าขอบฟ้าเปิด',direction:'ทิศตะวันตกใกล้ขอบฟ้า',time:'หลังพระอาทิตย์ตกไม่นาน',tip:'ดาวพุธและดาวศุกร์จะอยู่ต่ำ จึงควรเลือกจุดที่มองเห็นขอบฟ้าตะวันตกโล่ง'},
+{icon:'☄️',worth:'น่ารอ',direction:'ทิศตะวันตกเฉียงเหนือช่วงหัวค่ำ',time:'หลังฟ้ามืด โดยเฉพาะช่วงหัวค่ำ',tip:'Draconids มักไม่แรงมาก แต่ปี 2026 ไม่มีแสงจันทร์รบกวนใกล้ช่วงสูงสุด'},
+{icon:'🌑',worth:'น่ารอสำหรับดูดาว',direction:'ไม่มีทิศเฉพาะ',time:'ตลอดคืนเหมาะกับท้องฟ้ามืด',tip:'ดวงจันทร์ดับทำให้แสงจันทร์รบกวนน้อย เหมาะกับวัตถุท้องฟ้าจาง ๆ'},
+{icon:'☿️',worth:'น่าลองดู',direction:'ทิศตะวันตกหลังพระอาทิตย์ตก',time:'ช่วงพลบค่ำ',tip:'ดาวพุธยังอยู่ต่ำมาก จึงต้องมีขอบฟ้าตะวันตกโล่ง'},
+{icon:'☄️',worth:'พอรอได้',direction:'ใกล้บริเวณกลุ่มดาววัวทางท้องฟ้ายามค่ำ',time:'ช่วงกลางคืน',tip:'จำนวนดาวตกไม่สูง แต่มีโอกาสเห็นลูกไฟสว่าง'},
+{icon:'☄️',worth:'น่ารอมาก',direction:'ทิศตะวันออก ช่วงดึกถึงก่อนรุ่งเช้า',time:'หลังเที่ยงคืนถึงก่อนรุ่งเช้า',tip:'เป็นหนึ่งในฝนดาวตกเด่นของปี แต่ปีนี้แสงจันทร์อาจกลบดาวตกดวงที่จาง'},
+{icon:'🌕',worth:'น่าดู',direction:'ขึ้นทางทิศตะวันออกและเคลื่อนข้ามท้องฟ้า',time:'ตลอดคืนใกล้คืนเต็มดวง',tip:'เหมาะชมดวงจันทร์ แต่ไม่เหมาะกับการดูดาวตกหรือวัตถุจาง ๆ'},
+{icon:'✨',worth:'น่าดู',direction:'ทิศตะวันออกช่วงค่ำ',time:'ช่วงค่ำถึงกลางคืน',tip:'Pleiades มองเห็นได้ด้วยตาเปล่าเป็นกลุ่มดาวเล็ก ๆ และกล้องสองตาจะช่วยให้เห็นดาวมากขึ้น'},
+{icon:'☄️',worth:'พอรอได้',direction:'บริเวณกลุ่มดาววัว',time:'ช่วงกลางคืน',tip:'จุดเด่นคือโอกาสพบลูกไฟ แม้จำนวนดาวตกโดยรวมไม่สูง'},
+{icon:'🌑',worth:'น่ารอสำหรับดูดาว',direction:'ไม่มีทิศเฉพาะ',time:'ตลอดคืน',tip:'ท้องฟ้ามืดจากแสงจันทร์เหมาะกับการดูดาวและวัตถุจาง'},
+{icon:'☄️',worth:'พอรอได้',direction:'บริเวณกลุ่มดาววัว',time:'ช่วงกลางคืน',tip:'Northern Taurids เด่นเรื่องลูกไฟมากกว่าจำนวนดาวตก'},
+{icon:'🪐',worth:'น่าดูมาก',direction:'ท้องฟ้ายามเช้าหรือช่วงเวลาที่ดาวเคราะห์ทั้งคู่พ้นขอบฟ้า',time:'ขึ้นอยู่กับเวลาเกิดของดาวเคราะห์ในวันนั้น',tip:'ดาวอังคารและดาวพฤหัสบดีจะดูใกล้กันมากจนเหมาะกับกล้องสองตา'},
+{icon:'☄️',worth:'น่ารอ',direction:'ทิศตะวันออกช่วงดึก',time:'หลังเที่ยงคืนถึงก่อนรุ่งเช้า',tip:'Leonids มีดาวตกเร็วและอาจมีลูกไฟ แต่ปีนี้แสงจันทร์มีโอกาสรบกวน'},
+{icon:'☿️',worth:'น่าลองดู',direction:'ทิศตะวันออกก่อนพระอาทิตย์ขึ้น',time:'ก่อนรุ่งเช้า',tip:'เป็นช่วงที่ดาวพุธแยกจากดวงอาทิตย์บนท้องฟ้ามากที่สุดทางตะวันตก'},
+{icon:'🌕',worth:'น่าดู',direction:'ทิศตะวันออกยามค่ำ',time:'ตลอดคืนใกล้เต็มดวง',tip:'เหมาะชมพื้นผิวดวงจันทร์ แต่แสงจันทร์จะกลบดาวจาง'},
+{icon:'☄️',worth:'น่าลองสำหรับสายล่าฝนดาวตก',direction:'ท้องฟ้าด้านใต้',time:'ช่วงกลางคืน',tip:'Phoenicids แปรผันมากและเหมาะกับผู้ที่อยากลองสังเกตฝนดาวตกที่ไม่ค่อยเด่น'},
+{icon:'🌑',worth:'น่ารอสำหรับดูดาว',direction:'ไม่มีทิศเฉพาะ',time:'ตลอดคืน',tip:'คืนใกล้ New Moon เหมาะกับการสังเกตท้องฟ้ามืด'},
+{icon:'☄️',worth:'น่ารอที่สุดรายการหนึ่ง',direction:'ทิศตะวันออก ช่วงดึก',time:'ช่วงกลางคืนถึงก่อนรุ่งเช้า',tip:'Geminids เป็นฝนดาวตกที่เด่นมากและปี 2026 แสงจันทร์รบกวนไม่มาก'},
+{icon:'🌍',worth:'น่าสนใจ',direction:'ไม่มีทิศเฉพาะ',time:'เหตุการณ์เกิดตามเวลาที่กำหนด',tip:'เป็นวันสำคัญทางดาราศาสตร์เกี่ยวกับตำแหน่งดวงอาทิตย์และฤดูกาล'},
+{icon:'☄️',worth:'น่าลองดู',direction:'ทิศเหนือ',time:'ช่วงกลางคืน',tip:'Ursids มีช่วงสูงสุดสั้นและเหมาะกับการดูจากพื้นที่ท้องฟ้ามืด'}
+];
+const calendarSources=[
+[{name:'EarthSky — October night-sky guide',url:'https://earthsky.org/astronomy-essentials/visible-planets-tonight-mars-jupiter-venus-saturn-mercury/'}],
+[{name:'EarthSky — October night-sky guide',url:'https://earthsky.org/astronomy-essentials/visible-planets-tonight-mars-jupiter-venus-saturn-mercury/'}],
+[{name:'EarthSky — October night-sky guide',url:'https://earthsky.org/astronomy-essentials/visible-planets-tonight-mars-jupiter-venus-saturn-mercury/'},{name:'Space & Telescope — Planetary conjunctions 2026',url:'https://spaceandtelescope.com/planetary-conjunctions-2026/'}],
+[{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'},{name:'NASA Science — Skywatching',url:'https://science.nasa.gov/skywatching/'}],
+[{name:'Timeanddate — Moon Phases, Bangkok, Thailand',url:'https://www.timeanddate.com/moon/phases/thailand/bangkok'}],
+[{name:'EarthSky — Mercury greatest elongation, October 2026',url:'https://earthsky.org/tonight/mercury-after-sunset-greatest-elongation-east/'},{name:'EarthSky — Greatest elongation explained',url:'https://earthsky.org/astronomy-essentials/greatest-elongation-definition-venus-mercury/'}],
+[{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'}],
+[{name:'NASA Science — What’s Up: October 2026',url:'https://science.nasa.gov/solar-system/skywatching/whats-up-october-2026-skywatching-tips-from-nasa/'},{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'}],
+[{name:'Timeanddate — Moon Phases, Bangkok, Thailand',url:'https://www.timeanddate.com/moon/phases/thailand/bangkok'}],
+[{name:'NASA Science — What’s Up: October 2026',url:'https://science.nasa.gov/solar-system/skywatching/whats-up-october-2026-skywatching-tips-from-nasa/'},{name:'EarthSky — October night-sky guide',url:'https://earthsky.org/astronomy-essentials/visible-planets-tonight-mars-jupiter-venus-saturn-mercury/'}],
+[{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'}],
+[{name:'Timeanddate — Moon Phases, Bangkok, Thailand',url:'https://www.timeanddate.com/moon/phases/thailand/bangkok'}],
+[{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'}],
+[{name:'Space & Telescope — Planetary conjunctions 2026',url:'https://spaceandtelescope.com/planetary-conjunctions-2026/'},{name:'Night Sky Today — Mars and Jupiter close together',url:'https://nightskytoday.com/astronomical-events/planets/2026-11-16-mars-jupiter-planet-conjunction/'}],
+[{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'}],
+[{name:'EarthSky — Mercury greatest elongation, November 2026',url:'https://earthsky.org/astronomy-essentials/mercury-before-sunrise-greatest-elongation-west/'},{name:'EarthSky — Greatest elongation explained',url:'https://earthsky.org/astronomy-essentials/greatest-elongation-definition-venus-mercury/'}],
+[{name:'Timeanddate — Moon Phases, Bangkok, Thailand',url:'https://www.timeanddate.com/moon/phases/thailand/bangkok'}],
+[{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'}],
+[{name:'Timeanddate — Moon Phases, Bangkok, Thailand',url:'https://www.timeanddate.com/moon/phases/thailand/bangkok'}],
+[{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'}],
+[{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'}],
+[{name:'Timeanddate — Moon Phases, Bangkok, Thailand',url:'https://www.timeanddate.com/moon/phases/thailand/bangkok'}],
+[{name:'American Meteor Society — Meteor Shower Calendar 2026/2027',url:'https://www.amsmeteors.org/calendar/'}],
+[{name:'International Meteor Organization (IMO) — Meteor Shower Calendar 2026',url:'https://www.imo.net/resources/calendar/'}]
+];
+const sourceBadge=(items)=>items.map((src,j)=>`<a href="${src.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 ${j?'mt-2 ':''}hover:opacity-100"><i class="fa-solid fa-arrow-up-right-from-square text-[.72rem]"></i>${src.name}</a>`).join('<br>');
+function calendarModal(i){const x=calendarData[i],d=calendarDetails[i]||{},src=calendarSources[i]||[];openModal(d.icon||'✦',x[1],x[0],`<div class="space-y-5"><div><h4 class="text-pink-400 font-bold mb-1">⭐ ควรค่าแก่การรอไหม?</h4><p>${d.worth||'ขึ้นอยู่กับสภาพอากาศและตำแหน่งผู้สังเกต'}</p></div><div><h4 class="text-cyan-400 font-bold mb-1">🧭 ควรมองไปทางไหน?</h4><p>${d.direction||'ทิศทางขึ้นอยู่กับช่วงเวลาและตำแหน่งบนโลก'}</p></div><div><h4 class="text-purple-400 font-bold mb-1">🕐 ช่วงเวลาที่ควรดู</h4><p>${d.time||'ตรวจสอบเวลาท้องฟ้าท้องถิ่นก่อนสังเกต'}</p></div><div><h4 class="text-amber-400 font-bold mb-1">🔭 เคล็ดลับ</h4><p>${d.tip||x[3]}</p></div><div class="event-source-box text-sm text-gray-400"><b class="text-white block mb-2"><i class="fa-solid fa-link mr-2 text-purple-300"></i>แหล่งที่มาของข้อมูล</b>${sourceBadge(src)}</div><div class="bg-gray-900/60 rounded-xl p-4 border border-gray-800 text-sm text-gray-400"><b class="text-white">เหตุการณ์ต่อไป:</b> ${calendarData[i+1]?.[1]||'ไม่มีรายการถัดไป'}</div></div>`)}
+function openSourceModal(){openModal('ℹ️','แหล่งที่มาของข้อมูล','วันสำคัญ & ปรากฏการณ์ทางดาราศาสตร์',`<div class="space-y-5"><p class="text-gray-300 leading-relaxed">AstroVerse รวบรวมข้อมูลเหตุการณ์ท้องฟ้าจากแหล่งอ้างอิงทางดาราศาสตร์หลายแห่ง โดยเวลาที่มองเห็นได้จริงอาจแตกต่างตามสถานที่และสภาพท้องฟ้า</p><div class="source-modal-list"><div class="source-modal-item"><i class="fa-solid fa-satellite"></i><div><a class="source-modal-link font-semibold" href="https://science.nasa.gov/solar-system/skywatching/whats-up-october-2026-skywatching-tips-from-nasa/" target="_blank" rel="noopener noreferrer">NASA Science — What’s Up: October 2026</a><p class="text-gray-500 text-sm mt-1">ข้อมูลปรากฏการณ์ท้องฟ้าและคำแนะนำการสังเกตในเดือนตุลาคม</p></div></div><div class="source-modal-item"><i class="fa-solid fa-meteor"></i><div><a class="source-modal-link font-semibold" href="https://www.amsmeteors.org/calendar/" target="_blank" rel="noopener noreferrer">American Meteor Society (AMS)</a><p class="text-gray-500 text-sm mt-1">ปฏิทินฝนดาวตก ช่วงกิจกรรม คืนพีก และเงื่อนไขแสงจันทร์</p></div></div><div class="source-modal-item"><i class="fa-solid fa-moon"></i><div><a class="source-modal-link font-semibold" href="https://www.timeanddate.com/moon/phases/thailand/bangkok" target="_blank" rel="noopener noreferrer">Timeanddate — Moon Phases, Bangkok</a><p class="text-gray-500 text-sm mt-1">เวลาข้างขึ้นข้างแรมในเขตเวลาไทย (กรุงเทพฯ)</p></div></div><div class="source-modal-item"><i class="fa-solid fa-star"></i><div><a class="source-modal-link font-semibold" href="https://earthsky.org/astronomy-essentials/visible-planets-tonight-mars-jupiter-venus-saturn-mercury/" target="_blank" rel="noopener noreferrer">EarthSky — Visible Planets & Night Sky Guide</a><p class="text-gray-500 text-sm mt-1">แนวทางสังเกตดาวเคราะห์และวัตถุเด่นบนท้องฟ้า</p></div></div><div class="source-modal-item"><i class="fa-solid fa-arrows-to-dot"></i><div><a class="source-modal-link font-semibold" href="https://spaceandtelescope.com/planetary-conjunctions-2026/" target="_blank" rel="noopener noreferrer">Space & Telescope — Planetary Conjunctions 2026</a><p class="text-gray-500 text-sm mt-1">ข้อมูลการเข้าใกล้กันของดาวเคราะห์ในปี 2026</p></div></div></div><div class="text-xs text-gray-500 border-t border-gray-800 pt-4">เวลาและทิศทางในรายละเอียดเป็นแนวทางเบื้องต้นสำหรับผู้สังเกตในประเทศไทย ไม่ควรใช้แทนแผนที่ท้องฟ้าเฉพาะพื้นที่</div></div>`)}
+function checkZodiac(){let d=+day.value,m=+month.value;let i;if((m==3&&d>=21)||(m==4&&d<=19))i=0;else if((m==4&&d>=20)||(m==5&&d<=20))i=1;else if((m==5&&d>=21)||(m==6&&d<=20))i=2;else if((m==6&&d>=21)||(m==7&&d<=22))i=3;else if((m==7&&d>=23)||(m==8&&d<=22))i=4;else if((m==8&&d>=23)||(m==9&&d<=22))i=5;else if((m==9&&d>=23)||(m==10&&d<=22))i=6;else if((m==10&&d>=23)||(m==11&&d<=21))i=7;else if((m==11&&d>=22)||(m==12&&d<=21))i=8;else if((m==12&&d>=22)||(m==1&&d<=19))i=9;else if((m==1&&d>=20)||(m==2&&d<=18))i=10;else i=11;zModal(i);if(window.confetti)confetti({particleCount:100,spread:70,origin:{y:.6}})}
+let modalCloseTimer=null;
+function openModal(i,t,s,b){
+  if(modalCloseTimer)clearTimeout(modalCloseTimer);
+  mi.textContent=i;mt.textContent=t;ms.textContent=s;mb.innerHTML=b;
+  modal.classList.remove('hidden','modal-closing');
+  void modal.offsetWidth;
+  requestAnimationFrame(()=>modal.classList.add('modal-active'));
+}
+function closeModal(){
+  if(modal.classList.contains('hidden'))return;
+  modal.classList.remove('modal-active');
+  modal.classList.add('modal-closing');
+  if(modalCloseTimer)clearTimeout(modalCloseTimer);
+  modalCloseTimer=setTimeout(()=>{
+    modal.classList.add('hidden');
+    modal.classList.remove('modal-closing','planet-open');
+    modalCloseTimer=null;
+  },520);
+}
+const planets=[
+{icon:'☀',name:'ดวงอาทิตย์',radius:24,orbit:0,speed:0,color:'#f97316',type:'ดาวฤกษ์',diameter:'ประมาณ 1,392,700 กม.',temp:'ประมาณ 5,500 °C ที่พื้นผิว',orbitPeriod:'ระบบสุริยะโคจรรอบศูนย์กลางทางช้างเผือกประมาณ 230 ล้านปี',rotation:'ประมาณ 25 วันบริเวณเส้นศูนย์สูตร',desc:'ดาวฤกษ์ศูนย์กลางของระบบสุริยะและเป็นแหล่งพลังงานหลักของระบบ'},
+{icon:'☿',name:'ดาวพุธ',radius:5,orbit:45,speed:.035,color:'#aaa',type:'ดาวเคราะห์หิน',diameter:'4,879 กม.',temp:'เฉลี่ยประมาณ 167 °C',orbitPeriod:'88 วัน',rotation:'58.6 วัน',desc:'ดาวเคราะห์ที่อยู่ใกล้ดวงอาทิตย์ที่สุดและมีขนาดเล็กที่สุดในบรรดา 8 ดาวเคราะห์'},
+{icon:'♀',name:'ดาวศุกร์',radius:8,orbit:75,speed:.025,color:'#fde047',type:'ดาวเคราะห์หิน',diameter:'12,104 กม.',temp:'เฉลี่ยประมาณ 464 °C',orbitPeriod:'224.7 วัน',rotation:'243 วัน (หมุนย้อนทิศ)',desc:'ดาวเคราะห์ที่มีอุณหภูมิพื้นผิวเฉลี่ยสูงที่สุด เนื่องจากบรรยากาศหนาแน่นและภาวะเรือนกระจก'},
+{icon:'',name:'โลก',radius:9,orbit:110,speed:.018,color:'#38bdf8',type:'ดาวเคราะห์หิน',diameter:'12,756 กม.',temp:'เฉลี่ยประมาณ 15 °C',orbitPeriod:'365.25 วัน',rotation:'23 ชม. 56 นาที',desc:'ดาวเคราะห์บ้านของเรา และเป็นสถานที่เดียวที่เรายืนยันว่ามีสิ่งมีชีวิต'},
+{icon:'♂',name:'ดาวอังคาร',radius:7,orbit:145,speed:.014,color:'#ef4444',type:'ดาวเคราะห์หิน',diameter:'6,792 กม.',temp:'เฉลี่ยประมาณ -65 °C',orbitPeriod:'687 วัน',rotation:'24 ชม. 37 นาที',desc:'ดาวเคราะห์สีแดง มีภูเขาไฟและหุบเขาขนาดใหญ่ และเป็นเป้าหมายสำคัญของการสำรวจ'},
+{icon:'♃',name:'ดาวพฤหัสบดี',radius:15,orbit:190,speed:.009,color:'#fb923c',type:'ดาวแก๊สยักษ์',diameter:'ประมาณ 142,984 กม.',temp:'ประมาณ -110 °C',orbitPeriod:'11.86 ปี',rotation:'ประมาณ 9 ชม. 56 นาที',desc:'ดาวเคราะห์ที่ใหญ่ที่สุดในระบบสุริยะ มีจุดแดงใหญ่ซึ่งเป็นพายุขนาดมหึมา'},
+{icon:'♄',name:'ดาวเสาร์',radius:12,orbit:225,speed:.006,color:'#fef08a',type:'ดาวแก๊สยักษ์',diameter:'ประมาณ 120,536 กม.',temp:'ประมาณ -140 °C',orbitPeriod:'29.45 ปี',rotation:'ประมาณ 10 ชม. 42 นาที',desc:'ดาวแก๊สยักษ์ที่โดดเด่นด้วยระบบวงแหวนขนาดใหญ่และซับซ้อน'},
+{icon:'♅',name:'ดาวยูเรนัส',radius:10,orbit:250,speed:.004,color:'#22d3ee',type:'ดาวยักษ์น้ำแข็ง',diameter:'ประมาณ 51,118 กม.',temp:'ประมาณ -195 °C',orbitPeriod:'84 ปี',rotation:'ประมาณ 17 ชม. 14 นาที (หมุนย้อนทิศ)',desc:'ดาวยักษ์น้ำแข็งที่มีแกนหมุนเอียงมากจนดูเหมือนหมุนตะแคงข้าง'},
+{icon:'♆',name:'ดาวเนปจูน',radius:10,orbit:275,speed:.003,color:'#3b82f6',type:'ดาวยักษ์น้ำแข็ง',diameter:'ประมาณ 49,528 กม.',temp:'ประมาณ -200 °C',orbitPeriod:'164.8 ปี',rotation:'ประมาณ 16 ชม. 6 นาที',desc:'ดาวเคราะห์ที่อยู่ไกลดวงอาทิตย์ที่สุดในบรรดา 8 ดาวเคราะห์ และมีลมที่เร็วมาก'}
+];
+let canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d'),angles=planets.map(()=>Math.random()*6.28),running=false,aid=null,solarReady=false;
+function resizeSolar(){const box=canvas.parentElement,w=Math.max(280,box.clientWidth-24),h=Math.max(520,Math.min(680,w*1.08)),dpr=Math.min(window.devicePixelRatio||1,2);canvas.style.width=w+'px';canvas.style.height=h+'px';canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);solarReady=true;drawSolar()}
+function drawSolar(){if(!solarReady)return;const w=parseFloat(canvas.style.width)||300,h=parseFloat(canvas.style.height)||520;ctx.clearRect(0,0,w,h);const cx=w/2,cy=h/2,maxOrbit=Math.min(w/2-28,h/2-28),scale=Math.min(1,maxOrbit/275);planets.forEach((p,i)=>{const orbit=p.orbit*scale;if(orbit>0){ctx.beginPath();ctx.arc(cx,cy,orbit,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=1;ctx.stroke();const x=cx+Math.cos(angles[i])*orbit,y=cy+Math.sin(angles[i])*orbit;if(p.name==='ดาวเสาร์'){ctx.save();ctx.translate(x,y);ctx.rotate(-.28);ctx.beginPath();ctx.ellipse(0,0,Math.max(16,p.radius*2.5),Math.max(5,p.radius*.8),0,0,Math.PI*2);ctx.strokeStyle='rgba(254,240,138,.75)';ctx.lineWidth=3;ctx.stroke();ctx.restore()}ctx.beginPath();ctx.arc(x,y,Math.max(3,p.radius*scale),0,Math.PI*2);ctx.fillStyle=p.color;ctx.shadowBlur=10;ctx.shadowColor=p.color;ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#cbd5e1';ctx.font='12px Kanit, sans-serif';ctx.fillText(p.name,x+Math.max(4,p.radius*scale)+5,y+4)}else{ctx.beginPath();ctx.arc(cx,cy,Math.max(14,p.radius*scale),0,Math.PI*2);ctx.fillStyle=p.color;ctx.shadowBlur=24;ctx.shadowColor=p.color;ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#cbd5e1';ctx.font='12px Kanit, sans-serif';ctx.fillText(p.name,cx+30,cy+4)}})}
+function animate(){if(!running)return;angles=angles.map((a,i)=>a+(planets[i].speed||0));drawSolar();aid=requestAnimationFrame(animate)}
+function startSolar(){running=false;if(aid)cancelAnimationFrame(aid);solarReady=false;const loading=document.getElementById('solarLoading');if(loading)loading.classList.remove('hidden');requestAnimationFrame(()=>requestAnimationFrame(()=>{resizeSolar();if(loading)loading.classList.add('hidden');running=true;animate()}))}
+function toggleOrbit(){running=!running;play.innerHTML=running?'หยุด':'เล่น';if(running){if(aid)cancelAnimationFrame(aid);animate()}else if(aid)cancelAnimationFrame(aid)}
+window.addEventListener('resize',()=>{const sec=document.getElementById('solar');if(sec&&!sec.classList.contains('hidden'))resizeSolar()});
+canvas.onclick=e=>{const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,w=parseFloat(canvas.style.width)||r.width,h=parseFloat(canvas.style.height)||r.height,cx=w/2,cy=h/2,scale=Math.min(1,(Math.min(w,h)/2-28)/275);planets.forEach((p,i)=>{const o=p.orbit*scale,px=p.orbit?cx+Math.cos(angles[i])*o:cx,py=p.orbit?cy+Math.sin(angles[i])*o:cy;if(Math.hypot(x-px,y-py)<Math.max(12,p.radius*scale+8))openPlanetInfo(p)})};
+function openPlanetInfo(p){openModal('',p.name,p.type,`<div class="space-y-4"><p class="text-gray-200">${p.desc}</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800"><span class="text-xs text-gray-400 block">ประเภท</span><b class="text-cyan-300">${p.type}</b></div><div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800"><span class="text-xs text-gray-400 block">ขนาดเส้นผ่านศูนย์กลาง</span><b class="text-cyan-300">${p.diameter}</b></div><div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800"><span class="text-xs text-gray-400 block">อุณหภูมิเฉลี่ย</span><b class="text-amber-300">${p.temp}</b></div><div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800"><span class="text-xs text-gray-400 block">โคจรรอบดวงอาทิตย์ครบ 1 รอบ</span><b class="text-purple-300">${p.orbitPeriod}</b></div><div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800 sm:col-span-2"><span class="text-xs text-gray-400 block">หมุนรอบตัวเองครบ 1 รอบ</span><b class="text-green-300">${p.rotation}</b></div></div></div>`);modal.classList.add('planet-open')}
+
+</script></body></html>
